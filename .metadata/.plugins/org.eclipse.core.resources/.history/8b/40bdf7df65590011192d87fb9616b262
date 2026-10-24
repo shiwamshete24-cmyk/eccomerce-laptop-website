@@ -1,0 +1,422 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ page import="in.sp.model.User"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+User user = (User) session.getAttribute("userData");
+
+if (user == null) {
+	response.sendRedirect("login.html");
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cart - TechLaptop</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- ICONS -->
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+	rel="stylesheet">
+
+<link rel="stylesheet" href="css/cart.css">
+
+<style>
+
+/* =========================
+   NAVBAR
+========================= */
+
+.custom-navbar{
+
+	background:
+	rgba(0,0,0,0.82);
+
+	backdrop-filter:blur(12px);
+
+	padding:18px 0;
+
+	position:sticky;
+
+	top:0;
+
+	z-index:999;
+
+	border-bottom:
+	1px solid rgba(255,255,255,0.08);
+
+}
+
+.navbar-brand{
+
+	font-size:34px;
+
+	font-weight:800;
+
+	color:white !important;
+
+	letter-spacing:1px;
+
+}
+
+.nav-link{
+
+	color:#e5e7eb !important;
+
+	font-size:15px;
+
+	font-weight:500;
+
+	margin-left:20px;
+
+	display:flex;
+
+	align-items:center;
+
+	gap:8px;
+
+	transition:0.3s;
+
+}
+
+.nav-link:hover{
+
+	color:#d946ef !important;
+
+}
+
+.profile-btn{
+
+	background:
+	rgba(255,255,255,0.08);
+
+	padding:10px 18px !important;
+
+	border-radius:14px;
+
+}
+
+.dropdown-menu{
+
+	background:#111827;
+
+	border:none;
+
+	border-radius:16px;
+
+	padding:10px;
+
+}
+
+.dropdown-item{
+
+	color:white;
+
+	padding:12px 15px;
+
+	border-radius:10px;
+
+	font-size:14px;
+
+	transition:0.3s;
+
+}
+
+.dropdown-item:hover{
+
+	background:#d946ef;
+
+	color:white;
+
+}
+
+.cart-btn{
+
+	background:
+	linear-gradient(
+	135deg,
+	#d946ef,
+	#9333ea
+	);
+
+	color:white;
+
+	text-decoration:none;
+
+	padding:12px 24px;
+
+	border-radius:16px;
+
+	font-size:15px;
+
+	font-weight:600;
+
+	display:inline-flex;
+
+	align-items:center;
+
+	gap:8px;
+
+	box-shadow:
+	0 8px 20px rgba(217,70,239,0.35);
+
+	transition:0.3s;
+
+}
+
+.cart-btn:hover{
+
+	color:white;
+
+	transform:translateY(-3px);
+
+}
+
+.navbar-toggler{
+
+	border:none;
+
+	box-shadow:none !important;
+
+}
+
+.navbar-toggler-icon{
+
+	filter:invert(1);
+
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:991px){
+
+	.navbar-nav{
+
+		padding-top:20px;
+
+	}
+
+	.nav-link{
+
+		margin-left:0;
+
+		margin-bottom:12px;
+
+	}
+
+	.cart-btn{
+
+		width:100%;
+
+		justify-content:center;
+
+		margin-top:10px;
+
+	}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg custom-navbar">
+
+	<div class="container">
+
+		<!-- LOGO -->
+
+		<a class="navbar-brand" href="home.jsp">
+
+			TechLaptop
+
+		</a>
+
+		<!-- TOGGLER -->
+
+		<button
+		class="navbar-toggler"
+		type="button"
+		data-bs-toggle="collapse"
+		data-bs-target="#navbarMenu">
+
+			<span class="navbar-toggler-icon"></span>
+
+		</button>
+
+		<!-- MENU -->
+
+		<div
+		class="collapse navbar-collapse"
+		id="navbarMenu">
+
+			<ul class="navbar-nav ms-auto align-items-lg-center">
+
+				<!-- HOME -->
+
+				<li class="nav-item">
+
+					<a
+					class="nav-link"
+					href="home.jsp">
+
+						<i class="bi bi-house-door-fill"></i>
+
+						Home
+
+					</a>
+
+				</li>
+
+				<!-- LAPTOPS -->
+
+				<li class="nav-item">
+
+					<a
+					class="nav-link"
+					href="laptops.jsp">
+
+						<i class="bi bi-laptop-fill"></i>
+
+						Laptops
+
+					</a>
+
+				</li>
+
+				<!-- ORDERS -->
+
+				<li class="nav-item">
+
+					<a
+					class="nav-link"
+					href="my_orders.jsp">
+
+						<i class="bi bi-bag-check-fill"></i>
+
+						My Orders
+
+					</a>
+
+				</li>
+
+				<!-- PROFILE -->
+
+				<li class="nav-item dropdown">
+
+					<a
+					class="nav-link dropdown-toggle profile-btn"
+					href="#"
+					role="button"
+					data-bs-toggle="dropdown">
+
+						<i class="bi bi-person-circle"></i>
+
+						<%=user.getName()%>
+
+					</a>
+
+					<ul class="dropdown-menu dropdown-menu-end">
+
+						<li>
+
+							<a
+							class="dropdown-item"
+							href="profile.jsp">
+
+								<i class="bi bi-person"></i>
+
+								My Profile
+
+							</a>
+
+						</li>
+
+						<li>
+
+							<a
+							class="dropdown-item"
+							href="change_password.jsp">
+
+								<i class="bi bi-shield-lock"></i>
+
+								Change Password
+
+							</a>
+
+						</li>
+
+						<li>
+
+							<hr class="dropdown-divider">
+
+						</li>
+
+						<li>
+
+							<a
+							class="dropdown-item text-danger"
+							href="Logout">
+
+								<i class="bi bi-box-arrow-right"></i>
+
+								Logout
+
+							</a>
+
+						</li>
+
+					</ul>
+
+				</li>
+
+				<!-- CART -->
+
+				<li class="nav-item ms-lg-3">
+
+					<a
+					class="cart-btn"
+					href="cart.jsp">
+
+						<i class="bi bi-cart-fill"></i>
+
+						Cart
+
+					</a>
+
+				</li>
+
+			</ul>
+
+		</div>
+
+	</div>
+
+</nav>

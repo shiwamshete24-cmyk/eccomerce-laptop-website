@@ -1,0 +1,95 @@
+/* OTP INPUT */
+
+.otp-input{
+
+	text-align:center;
+
+	font-size:22px !important;
+
+	font-weight:700;
+
+	letter-spacing:6px;
+
+}
+
+/* OTP ICON */
+
+.otp-icon{
+
+	width:90px;
+
+	height:90px;
+
+	background:
+	rgba(255,255,255,0.12);
+
+	border-radius:50%;
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	margin:auto;
+
+	margin-bottom:25px;
+
+	border:
+	1px solid rgba(255,255,255,0.1);
+
+}
+
+.otp-icon i{
+
+	font-size:40px;
+
+	color:white;
+
+}
+
+/* TEXT */
+
+.otp-note{
+
+	text-align:center;
+
+	color:#d1d5db;
+
+	font-size:14px;
+
+	line-height:1.8;
+
+	margin-bottom:35px;
+
+}
+
+.resend-text{
+
+	text-align:center;
+
+	margin-top:28px;
+
+	font-size:14px;
+
+	color:#e5e7eb;
+
+}
+
+.resend-text a{
+
+	color:white;
+
+	font-weight:700;
+
+	text-decoration:none;
+
+	transition:0.3s;
+
+}
+
+.resend-text a:hover{
+
+	color:#d946ef;
+
+}

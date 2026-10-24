@@ -1,0 +1,476 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+
+<%@ page import="in.sp.model.User"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+User user = (User)session.getAttribute("userData");
+
+if(user == null){
+	response.sendRedirect("login.html");
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Laptops</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<!-- ICON -->
+
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+<link href="css/laptop.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+
+	<div class="container-fluid">
+
+		<a class="navbar-brand" href="home.jsp">
+			TechLaptop
+		</a>
+
+		<button
+		class="navbar-toggler"
+		data-bs-toggle="collapse"
+		data-bs-target="#menu">
+
+			<span class="navbar-toggler-icon"></span>
+
+		</button>
+
+		<div class="collapse navbar-collapse" id="menu">
+
+			<ul class="navbar-nav ms-auto">
+
+				<li class="nav-item">
+					<a class="nav-link active" href="home.jsp">
+						Home
+					</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="laptops.jsp">
+						Laptops
+					</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="about.jsp">
+						About
+					</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="contact.jsp">
+						Contact
+					</a>
+				</li>
+
+			</ul>
+
+		</div>
+
+	</div>
+
+</nav>
+
+<!-- MAIN -->
+
+<div class="container-fluid">
+
+	<div class="row">
+
+		<!-- SIDEBAR -->
+
+		<div class="col-12 col-lg-2 p-0">
+
+			<div class="sidebar">
+
+				<h3 class="sidebar-title">
+					Brands
+				</h3>
+
+				<a href="laptops.jsp" class="brand-link">
+					All Laptops
+				</a>
+
+				<a href="laptops.jsp?brand=Dell" class="brand-link">
+					Dell
+				</a>
+
+				<a href="laptops.jsp?brand=HP" class="brand-link">
+					HP
+				</a>
+
+				<a href="laptops.jsp?brand=Lenovo" class="brand-link">
+					Lenovo
+				</a>
+
+				<a href="laptops.jsp?brand=ASUS" class="brand-link">
+					ASUS
+				</a>
+
+				<a href="laptops.jsp?brand=Acer" class="brand-link">
+					Acer
+				</a>
+
+				<a href="laptops.jsp?brand=MSI" class="brand-link">
+					MSI
+				</a>
+
+				<a href="laptops.jsp?brand=Apple" class="brand-link">
+					Apple
+				</a>
+
+				<a href="laptops.jsp?brand=Samsung" class="brand-link">
+					Samsung
+				</a>
+
+				<a href="laptops.jsp?brand=Alienware" class="brand-link">
+					Alienware
+				</a>
+
+				<a href="laptops.jsp?brand=Razer" class="brand-link">
+					Razer
+				</a>
+
+			</div>
+
+		</div>
+
+		<!-- PRODUCTS -->
+
+		<div class="col-12 col-lg-10">
+
+			<div class="container py-4">
+
+				<div class="page-title">
+
+					<h1>
+						 Laptops
+					</h1>
+
+					<p>
+						Explore powerful gaming and business laptops.
+					</p>
+
+				</div>
+
+				<div class="row g-4">
+
+				<%
+
+				try{
+
+					String brand =
+					request.getParameter("brand");
+
+					Connection conn =
+					DbConnection.getConnection();
+
+					PreparedStatement ps;
+
+					if(brand != null){
+
+						String sql =
+						"select * from laptops where brand=? order by id desc";
+
+						ps = conn.prepareStatement(sql);
+
+						ps.setString(1, brand);
+
+					}else{
+
+						String sql =
+						"select * from laptops order by id desc";
+
+						ps = conn.prepareStatement(sql);
+
+					}
+
+					ResultSet rs = ps.executeQuery();
+
+					while(rs.next()){
+
+						int stock =
+						rs.getInt("stock");
+
+				%>
+
+				<div class="col-12 col-md-6 col-xl-4">
+
+					<div class="product-card">
+
+						<!-- BRAND -->
+
+						<div class="badge-custom">
+							<%=rs.getString("brand")%>
+						</div>
+
+						<!-- STOCK -->
+
+						<div
+						style="
+						position:absolute;
+						top:15px;
+						right:15px;
+						z-index:5;">
+
+						<%
+						if(stock > 0){
+						%>
+
+							<span
+							style="
+							background:#00ff88;
+							color:black;
+							padding:7px 14px;
+							border-radius:20px;
+							font-size:12px;
+							font-weight:700;">
+
+								Available
+
+							</span>
+
+						<%
+						}else{
+						%>
+
+							<span
+							style="
+							background:red;
+							color:white;
+							padding:7px 14px;
+							border-radius:20px;
+							font-size:12px;
+							font-weight:700;">
+
+								Out Of Stock
+
+							</span>
+
+						<%
+						}
+						%>
+
+						</div>
+
+						<!-- IMAGE -->
+
+						<img
+						src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image1")%>"
+						alt="Laptop Image">
+
+						<!-- CONTENT -->
+
+						<div class="product-content">
+
+							<h4>
+								<%=rs.getString("name")%>
+							</h4>
+
+							<p>
+
+								<i class="bi bi-cpu"></i>
+								<%=rs.getString("processor")%>
+
+								<br>
+
+								<i class="bi bi-memory"></i>
+								<%=rs.getString("ram")%>
+
+								<br>
+
+								<i class="bi bi-device-ssd"></i>
+								<%=rs.getString("storage")%>
+
+								<br>
+
+								<i class="bi bi-gpu-card"></i>
+								<%=rs.getString("graphics")%>
+
+							</p>
+
+							<!-- RATING -->
+
+							<div class="mb-2">
+
+								<span style="color:gold;">
+									★★★★★
+								</span>
+
+								<span
+								style="
+								font-size:14px;
+								color:#ccc;">
+
+									<%=rs.getDouble("rating")%>
+
+									(
+									<%=rs.getInt("total_reviews")%>
+									Reviews )
+
+								</span>
+
+							</div>
+
+							<!-- PRICE -->
+
+							<div class="mb-2">
+
+								<span class="price">
+									₹<%=rs.getInt("price")%>
+								</span>
+
+								<span
+								style="
+								text-decoration:line-through;
+								color:#999;
+								margin-left:10px;
+								font-size:15px;">
+
+									₹<%=rs.getInt("old_price")%>
+
+								</span>
+
+							</div>
+
+							<!-- STOCK -->
+
+							<div class="mb-3">
+
+								<span
+								style="
+								color:#00d9ff;
+								font-size:15px;
+								font-weight:600;">
+
+									Stock :
+									<%=stock%>
+
+								</span>
+
+							</div>
+
+							<!-- BUTTONS -->
+
+							<div class="card-buttons">
+
+								<!-- SHOW DETAILS -->
+
+								<a
+								href="single_laptop.jsp?id=<%=rs.getInt("id")%>"
+								class="show-btn">
+
+									<i class="bi bi-eye"></i>
+									Show Details
+
+								</a>
+
+								<!-- ADD TO CART -->
+
+								<form
+								action="cart.jsp"
+								method="post"
+								style="flex:1;">
+
+									<input
+									type="hidden"
+									name="laptopId"
+									value="<%=rs.getInt("id")%>">
+
+									<%
+									if(stock > 0){
+									%>
+
+									<button class="cart-btn w-100">
+
+										<i class="bi bi-cart-plus"></i>
+										Add To Cart
+
+									</button>
+
+									<%
+									}else{
+									%>
+
+									<button
+									class="cart-btn out-btn w-100"
+									disabled>
+
+										Out Of Stock
+
+									</button>
+
+									<%
+									}
+									%>
+
+								</form>
+
+							</div>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<%
+
+					}
+
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+
+				%>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+<!-- BOOTSTRAP JS -->
+
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+
+</html>

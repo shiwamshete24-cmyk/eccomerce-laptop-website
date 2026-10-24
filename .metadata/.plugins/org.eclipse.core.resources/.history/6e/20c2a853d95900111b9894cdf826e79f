@@ -1,0 +1,559 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ page import="in.sp.model.User"%>
+
+<%
+User admin = (User) session.getAttribute("admin_details");
+
+if (admin == null) {
+
+	response.sendRedirect("admin_login.html");
+
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Add Laptop</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- ICONS -->
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+	rel="stylesheet">
+
+<style>
+
+/* =========================
+   GLOBAL
+========================= */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Poppins', sans-serif;
+}
+
+body {
+	background: #eef2f7;
+	overflow-x: hidden;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar {
+	width: 280px;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: linear-gradient(180deg, #111827, #1f2937);
+	padding: 30px 20px;
+	box-shadow: 5px 0 25px rgba(0, 0, 0, 0.12);
+	z-index: 1000;
+}
+
+.logo {
+	color: white;
+	font-size: 34px;
+	font-weight: 800;
+	margin-bottom: 50px;
+	text-align: center;
+}
+
+.sidebar-menu {
+	list-style: none;
+	padding: 0;
+}
+
+.sidebar-menu li {
+	margin-bottom: 12px;
+}
+
+.sidebar-menu a {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	padding: 15px 18px;
+	color: #d1d5db;
+	text-decoration: none;
+	border-radius: 16px;
+	font-size: 15px;
+	font-weight: 500;
+	transition: 0.3s;
+}
+
+.sidebar-menu a:hover {
+	background: linear-gradient(135deg, #d946ef, #9333ea);
+	color: white;
+	transform: translateX(5px);
+}
+
+.sidebar-menu .active {
+	background: linear-gradient(135deg, #d946ef, #9333ea);
+	color: white;
+}
+
+/* =========================
+   MAIN
+========================= */
+.main {
+	margin-left: 280px;
+	padding: 35px;
+}
+
+/* =========================
+   TOPBAR
+========================= */
+.topbar {
+	background: white;
+	padding: 22px 30px;
+	border-radius: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+	margin-bottom: 35px;
+}
+
+.topbar h2 {
+	font-size: 30px;
+	font-weight: 800;
+	color: #111827;
+}
+
+/* =========================
+   FORM BOX
+========================= */
+.form-box {
+	background: white;
+	padding: 40px;
+	border-radius: 30px;
+	box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================
+   FORM TITLE
+========================= */
+.form-title {
+	font-size: 30px;
+	font-weight: 800;
+	margin-bottom: 35px;
+	color: #111827;
+}
+
+/* =========================
+   LABELS
+========================= */
+.form-label {
+	font-weight: 600;
+	margin-bottom: 10px;
+	color: #374151;
+}
+
+/* =========================
+   INPUTS
+========================= */
+.form-control, .form-select {
+	height: 55px;
+	border: none;
+	background: #f3f4f6;
+	border-radius: 14px;
+	padding-left: 18px;
+	font-size: 15px;
+}
+
+.form-control:focus, .form-select:focus {
+	box-shadow: none;
+	border: 2px solid #d946ef;
+	background: white;
+}
+
+/* =========================
+   TEXTAREA
+========================= */
+textarea.form-control {
+	height: 140px;
+	padding-top: 15px;
+	resize: none;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.submit-btn {
+	width: 100%;
+	height: 58px;
+	border: none;
+	border-radius: 16px;
+	background: linear-gradient(135deg, #d946ef, #9333ea);
+	color: white;
+	font-size: 17px;
+	font-weight: 700;
+	margin-top: 15px;
+	transition: 0.3s;
+}
+
+.submit-btn:hover {
+	transform: translateY(-4px);
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media ( max-width :991px) {
+	.sidebar {
+		width: 100%;
+		height: auto;
+		position: relative;
+	}
+	.main {
+		margin-left: 0;
+	}
+}
+</style>
+
+</head>
+
+<body>
+
+	<!-- SIDEBAR -->
+
+	<div class="sidebar">
+
+		<h1 class="logo">TechLaptop</h1>
+
+		<ul class="sidebar-menu">
+
+			<li><a href="admin_dashboard.jsp"> <i
+					class="bi bi-grid-fill"></i> Dashboard
+
+			</a></li>
+
+			<li><a href="admin_profile.jsp"> <i
+					class="bi bi-person-circle"></i> Profile
+
+			</a></li>
+
+			<li><a href="admin_users.jsp"> <i class="bi bi-people-fill"></i>
+
+					Users
+
+			</a></li>
+
+			<li><a href="admin_laptops.jsp" class="active"> <i
+					class="bi bi-laptop"></i> Laptops
+
+			</a></li>
+
+			<li><a href="admin_orders.jsp"> <i
+					class="bi bi-bag-check-fill"></i> Orders
+
+			</a></li>
+
+		</ul>
+
+	</div>
+
+	<!-- MAIN -->
+
+	<div class="main">
+
+		<!-- TOPBAR -->
+
+		<div class="topbar">
+
+			<h2>Add New Laptop</h2>
+
+		</div>
+
+		<!-- FORM -->
+
+		<div class="form-box">
+
+			<h3 class="form-title">Laptop Information</h3>
+
+			<form action="AddLaptop" method="post" enctype="multipart/form-data">
+
+				<div class="row">
+
+					<!-- BRAND -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Brand </label> <select name="brand"
+							class="form-select" required>
+
+							<option value="">Select Brand</option>
+
+							<option>Dell</option>
+
+							<option>HP</option>
+
+							<option>Asus</option>
+
+							<option>Lenovo</option>
+
+							<option>Acer</option>
+
+							<option>MSI</option>
+
+							<option>Apple</option>
+							
+							<option>Samsung</option>
+							
+							<option>Alienware</option>
+							
+							<option>Razer</option>
+
+						</select>
+
+					</div>
+
+					<!-- NAME -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Laptop Name </label> <input type="text"
+							name="name" class="form-control" placeholder="Enter Laptop Name"
+							required>
+
+					</div>
+
+					<!-- PRICE -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Price </label> <input type="number"
+							name="price" class="form-control" placeholder="Enter Price"
+							required>
+
+					</div>
+
+					<!-- OLD PRICE -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Old Price </label> <input type="number"
+							name="old_price" class="form-control"
+							placeholder="Enter Old Price">
+
+					</div>
+
+					<!-- PROCESSOR -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Processor </label> <input type="text"
+							name="processor" class="form-control"
+							placeholder="Intel i7 / Ryzen 7">
+
+					</div>
+
+					<!-- RAM -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> RAM </label> <input type="text"
+							name="ram" class="form-control" placeholder="16GB DDR5">
+
+					</div>
+
+					<!-- STORAGE -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Storage </label> <input type="text"
+							name="storage" class="form-control" placeholder="512GB SSD">
+
+					</div>
+
+					<!-- GRAPHICS -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Graphics </label> <input type="text"
+							name="graphics" class="form-control" placeholder="RTX 4060">
+
+					</div>
+
+					<!-- DISPLAY SIZE -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Display Size </label> <input
+							type="text" name="display_size" class="form-control"
+							placeholder="15.6 inch">
+
+					</div>
+
+					<!-- DISPLAY TYPE -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Display Type </label> <input
+							type="text" name="display_type" class="form-control"
+							placeholder="Full HD IPS">
+
+					</div>
+
+					<!-- BATTERY -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Battery </label> <input type="text"
+							name="battery" class="form-control" placeholder="6 Hours">
+
+					</div>
+
+					<!-- OS -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Operating System </label> <input
+							type="text" name="operating_system" class="form-control"
+							placeholder="Windows 11">
+
+					</div>
+
+					<!-- COLOR -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Color </label> <input type="text"
+							name="color" class="form-control" placeholder="Black">
+
+					</div>
+
+					<!-- WEIGHT -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Weight </label> <input type="text"
+							name="weight" class="form-control" placeholder="2.2kg">
+
+					</div>
+
+					<!-- WARRANTY -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Warranty </label> <input type="text"
+							name="warranty" class="form-control" placeholder="1 Year">
+
+					</div>
+
+					<!-- STOCK -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Stock </label> <input type="number"
+							name="stock" class="form-control" placeholder="Enter Stock">
+
+					</div>
+
+					<!-- CATEGORY -->
+
+					<div class="col-md-6 mb-4">
+
+						<label class="form-label"> Category </label> <select
+							name="category" class="form-select">
+
+							<option>Gaming</option>
+
+							<option>Business</option>
+
+							<option>Student</option>
+
+							<option>Professional</option>
+
+						</select>
+
+					</div>
+
+					<!-- DESCRIPTION -->
+
+					<div class="col-12 mb-4">
+
+						<label class="form-label"> Description </label>
+
+						<textarea name="description" class="form-control"
+							placeholder="Enter Laptop Description"></textarea>
+
+					</div>
+
+					<!-- IMAGE 1 -->
+
+					<div class="col-md-4 mb-4">
+
+						<label class="form-label"> Image 1 </label> <input type="file"
+							name="image1" class="form-control">
+
+					</div>
+
+					<!-- IMAGE 2 -->
+
+					<div class="col-md-4 mb-4">
+
+						<label class="form-label"> Image 2 </label> <input type="file"
+							name="image2" class="form-control">
+
+					</div>
+
+					<!-- IMAGE 3 -->
+
+					<div class="col-md-4 mb-4">
+
+						<label class="form-label"> Image 3 </label> <input type="file"
+							name="image3" class="form-control">
+
+					</div>
+
+					<!-- BUTTON -->
+
+					<div class="col-12">
+
+						<button type="submit" class="submit-btn">
+
+							<i class="bi bi-plus-circle-fill"></i> Add Laptop
+
+						</button>
+
+					</div>
+
+				</div>
+
+			</form>
+
+		</div>
+
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+		
+	</script>
+
+</body>
+
+</html>

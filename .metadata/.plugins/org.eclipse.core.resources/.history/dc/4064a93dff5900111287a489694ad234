@@ -1,0 +1,258 @@
+package in.sp.Controllers;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import in.sp.connection.DbConnection;
+import in.sp.model.User;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@WebServlet("/PlaceOrder")
+public class PlaceOrder extends HttpServlet {
+
+	@Override
+	protected void doPost(
+	HttpServletRequest request,
+	HttpServletResponse response)
+
+	throws ServletException, IOException {
+
+		try {
+
+			/* SESSION */
+
+			HttpSession session =
+			request.getSession();
+
+			User user =
+			(User) session.getAttribute("userData");
+
+			if (user == null) {
+
+				response.sendRedirect("login.html");
+
+				return;
+			}
+
+			/* USER EMAIL */
+
+			String email =
+			user.getEmail();
+
+			/* FORM DATA */
+
+			String fullName =
+			request.getParameter("fullName");
+
+			String phone =
+			request.getParameter("phone");
+
+			String address =
+			request.getParameter("address");
+
+			String city =
+			request.getParameter("city");
+
+			String state =
+			request.getParameter("state");
+
+			String pincode =
+			request.getParameter("pincode");
+
+			String paymentMethod =
+			request.getParameter("paymentMethod");
+
+			Connection conn =
+			DbConnection.getConnection();
+
+			/* ===================================
+			   CALCULATE TOTAL AMOUNT
+			=================================== */
+
+			double totalAmount = 0;
+
+			String cartQuery =
+			"select cart.quantity, laptops.price " +
+			"from cart " +
+			"join laptops " +
+			"on cart.laptop_id=laptops.id " +
+			"where cart.user_email=?";
+
+			PreparedStatement cartPs =
+			conn.prepareStatement(cartQuery);
+
+			cartPs.setString(1, email);
+
+			ResultSet cartRs =
+			cartPs.executeQuery();
+
+			while (cartRs.next()) {
+
+				int qty =
+				cartRs.getInt("quantity");
+
+				double price =
+				cartRs.getDouble("price");
+
+				totalAmount += qty * price;
+
+			}
+
+			/* ===================================
+			   INSERT INTO ORDERS TABLE
+			=================================== */
+
+			String orderQuery =
+			"insert into orders(" +
+			"user_email," +
+			"full_name," +
+			"phone," +
+			"address," +
+			"city," +
+			"state," +
+			"pincode," +
+			"payment_method," +
+			"total_amount," +
+			"order_status" +
+			") values(?,?,?,?,?,?,?,?,?,?)";
+
+			PreparedStatement orderPs =
+			conn.prepareStatement(
+			orderQuery,
+			Statement.RETURN_GENERATED_KEYS);
+
+			orderPs.setString(1, email);
+
+			orderPs.setString(2, fullName);
+
+			orderPs.setString(3, phone);
+
+			orderPs.setString(4, address);
+
+			orderPs.setString(5, city);
+
+			orderPs.setString(6, state);
+
+			orderPs.setString(7, pincode);
+
+			orderPs.setString(8, paymentMethod);
+
+			orderPs.setDouble(9, totalAmount);
+
+			orderPs.setString(10, "pending");
+
+			orderPs.executeUpdate();
+
+			/* ===================================
+			   GET ORDER ID
+			=================================== */
+
+			int orderId = 0;
+
+			ResultSet generatedKeys =
+			orderPs.getGeneratedKeys();
+
+			if (generatedKeys.next()) {
+
+				orderId =
+				generatedKeys.getInt(1);
+
+			}
+
+			/* ===================================
+			   FETCH CART PRODUCTS
+			=================================== */
+
+			String itemsQuery =
+			"select cart.quantity, laptops.id, laptops.price " +
+			"from cart " +
+			"join laptops " +
+			"on cart.laptop_id=laptops.id " +
+			"where cart.user_email=?";
+
+			PreparedStatement itemsPs =
+			conn.prepareStatement(itemsQuery);
+
+			itemsPs.setString(1, email);
+
+			ResultSet itemsRs =
+			itemsPs.executeQuery();
+
+			/* ===================================
+			   INSERT INTO ORDER_ITEMS
+			=================================== */
+
+			while (itemsRs.next()) {
+
+				int laptopId =
+				itemsRs.getInt("id");
+
+				int quantity =
+				itemsRs.getInt("quantity");
+
+				double price =
+				itemsRs.getDouble("price");
+
+				String insertItemQuery =
+				"insert into order_items(" +
+				"order_id," +
+				"laptop_id," +
+				"quantity," +
+				"price" +
+				") values(?,?,?,?)";
+
+				PreparedStatement itemInsertPs =
+				conn.prepareStatement(insertItemQuery);
+
+				itemInsertPs.setInt(1, orderId);
+
+				itemInsertPs.setInt(2, laptopId);
+
+				itemInsertPs.setInt(3, quantity);
+
+				itemInsertPs.setDouble(4, price);
+
+				itemInsertPs.executeUpdate();
+
+			}
+
+			/* ===================================
+			   CLEAR CART
+			=================================== */
+
+			String clearCartQuery =
+			"delete from cart where user_email=?";
+
+			PreparedStatement clearPs =
+			conn.prepareStatement(clearCartQuery);
+
+			clearPs.setString(1, email);
+
+			clearPs.executeUpdate();
+
+			/* ===================================
+			   REDIRECT
+			=================================== */
+
+			response.sendRedirect("orders.jsp");
+
+		}
+
+		catch (Exception e) {
+
+			e.printStackTrace();
+
+		}
+
+	}
+
+}

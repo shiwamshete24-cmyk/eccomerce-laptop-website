@@ -1,0 +1,636 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ page import="in.sp.model.User"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+User user = (User) session.getAttribute("userData");
+
+if (user == null) {
+	response.sendRedirect("login.html");
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Orders</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- ICONS -->
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+	rel="stylesheet">
+
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Poppins', sans-serif;
+}
+
+body {
+	background: #edf1f5;
+	color: #111827;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+.navbar {
+	background: white;
+	padding: 18px 35px;
+	box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+	position: sticky;
+	top: 0;
+	z-index: 999;
+}
+
+.navbar-brand {
+	font-size: 32px;
+	font-weight: 800;
+	color: #0077ff !important;
+}
+
+.nav-link {
+	color: #374151 !important;
+	font-weight: 600;
+	margin-left: 20px;
+	transition: 0.3s;
+}
+
+.nav-link:hover {
+	color: #0077ff !important;
+}
+
+.custom-btn {
+	background: #0077ff;
+	color: white;
+	padding: 10px 18px;
+	border-radius: 12px;
+	text-decoration: none;
+	font-weight: 600;
+	transition: 0.3s;
+}
+
+.custom-btn:hover {
+	background: #005fe0;
+	color: white;
+}
+
+.user-btn {
+	color: #111827 !important;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+/* =========================
+   HERO
+========================= */
+.orders-hero {
+	padding: 50px 0 30px;
+	text-align: center;
+}
+
+.orders-hero h1 {
+	font-size: 55px;
+	font-weight: 800;
+}
+
+.orders-hero span {
+	color: #0077ff;
+}
+
+.orders-hero p {
+	color: #6b7280;
+	margin-top: 10px;
+	font-size: 17px;
+}
+
+/* =========================
+   ORDER CARD
+========================= */
+.order-card {
+	background: white;
+	padding: 25px;
+	border-radius: 24px;
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+	transition: 0.3s;
+}
+
+.order-card:hover {
+	transform: translateY(-4px);
+}
+
+.order-img {
+	width: 100%;
+	height: 180px;
+	object-fit: contain;
+	background: #fff;
+	border-radius: 18px;
+	padding: 10px;
+	border: 1px solid #eee;
+}
+
+.order-card h3 {
+	font-size: 25px;
+	font-weight: 700;
+	margin-bottom: 10px;
+}
+
+.order-card p {
+	color: #6b7280;
+	font-size: 14px;
+	line-height: 1.8;
+}
+
+.order-info {
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+	margin-top: 10px;
+	font-size: 14px;
+	font-weight: 600;
+	color: #374151;
+}
+
+/* =========================
+   PRICE
+========================= */
+.price {
+	font-size: 30px;
+	font-weight: 800;
+	margin-bottom: 15px;
+	color: #111827;
+}
+
+/* =========================
+   STATUS
+========================= */
+.status {
+	display: inline-block;
+	padding: 10px 18px;
+	border-radius: 50px;
+	font-size: 14px;
+	font-weight: 700;
+	text-transform: capitalize;
+}
+
+.pending {
+	background: #fff7ed;
+	color: #f97316;
+}
+
+.confirmed {
+	background: #eff6ff;
+	color: #2563eb;
+}
+
+.shipped {
+	background: #ecfeff;
+	color: #0891b2;
+}
+
+.delivered {
+	background: #ecfdf5;
+	color: #00b67a;
+}
+
+.cancelled {
+	background: #fef2f2;
+	color: red;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.track-btn {
+	background: #0077ff;
+	color: white;
+	border: none;
+	padding: 12px 20px;
+	border-radius: 12px;
+	font-weight: 600;
+	transition: 0.3s;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.track-btn:hover {
+	background: #005fe0;
+	color: white;
+	transform: translateY(-3px);
+}
+
+/* =========================
+   EMPTY
+========================= */
+.empty-box {
+	background: white;
+	padding: 70px 20px;
+	border-radius: 24px;
+	text-align: center;
+	box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+}
+
+.empty-box h2 {
+	font-size: 40px;
+	font-weight: 800;
+	margin-bottom: 15px;
+}
+
+.empty-box p {
+	color: #6b7280;
+	margin-bottom: 30px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.footer {
+	background: #111827;
+	color: white;
+	padding: 60px 0;
+	margin-top: 60px;
+}
+
+.footer-logo {
+	font-size: 34px;
+	font-weight: 800;
+	margin-bottom: 18px;
+}
+
+.footer h4 {
+	margin-bottom: 18px;
+	font-weight: 700;
+}
+
+.footer-links {
+	list-style: none;
+	padding: 0;
+}
+
+.footer-links li {
+	margin-bottom: 10px;
+}
+
+.footer-links a {
+	color: #d1d5db;
+	text-decoration: none;
+}
+
+.footer-links a:hover {
+	color: white;
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media ( max-width :576px) {
+	.orders-hero h1 {
+		font-size: 38px;
+	}
+	.order-info {
+		flex-direction: column;
+		gap: 8px;
+	}
+}
+</style>
+
+</head>
+
+<body>
+
+	<!-- NAVBAR -->
+
+	<nav class="navbar navbar-expand-lg navbar-light">
+
+		<div class="container-fluid">
+
+			<a class="navbar-brand" href="home.jsp"> TechLaptop </a>
+
+			<button class="navbar-toggler" data-bs-toggle="collapse"
+				data-bs-target="#menu">
+
+				<span class="navbar-toggler-icon"></span>
+
+			</button>
+
+			<div class="collapse navbar-collapse" id="menu">
+
+				<ul class="navbar-nav ms-auto">
+
+					<li class="nav-item"><a class="nav-link" href="home.jsp">
+
+							Home </a></li>
+
+					<li class="nav-item"><a class="nav-link" href="laptops.jsp">
+
+							Laptops </a></li>
+
+					<li class="nav-item"><a class="nav-link active"
+						href="orders.jsp"> Orders </a></li>
+
+				</ul>
+
+				<ul class="navbar-nav ms-4 align-items-center">
+
+					<li class="nav-item me-3"><a href="cart.jsp"
+						class="custom-btn"> <i class="bi bi-cart3"></i> Cart
+
+					</a></li>
+
+					<li class="nav-item dropdown"><a
+						class="nav-link dropdown-toggle user-btn"
+						data-bs-toggle="dropdown"> <i class="bi bi-person-circle"></i>
+
+							<%=user.getName()%>
+
+					</a>
+
+						<ul class="dropdown-menu dropdown-menu-end">
+
+							<li><a class="dropdown-item" href="profiles.jsp">
+
+									Profile </a></li>
+
+							<li><a class="dropdown-item text-danger" href="Logout">
+
+									Logout </a></li>
+
+						</ul></li>
+
+				</ul>
+
+			</div>
+
+		</div>
+
+	</nav>
+
+	<!-- HERO -->
+
+	<section class="orders-hero">
+
+		<div class="container text-center">
+
+			<h1>
+
+				My <span>Orders</span>
+
+			</h1>
+
+			<p>Track your premium laptop orders and delivery status.</p>
+
+		</div>
+
+	</section>
+
+	<!-- ORDERS -->
+
+	<section class="container pb-5">
+
+		<div class="row g-4">
+
+			<%
+			Connection conn = DbConnection.getConnection();
+
+			String sql = "select orders.*, " + "order_items.quantity, " + "order_items.price, " + "order_items.laptop_id, "
+					+ "laptops.* " + "from orders " + "join order_items " + "on orders.id = order_items.order_id " + "join laptops "
+					+ "on order_items.laptop_id = laptops.id " + "where orders.user_email=? " + "order by orders.order_date desc";
+
+			PreparedStatement ps = conn.prepareStatement(sql);
+
+			ps.setString(1, user.getEmail());
+
+			ResultSet rs = ps.executeQuery();
+
+			boolean hasOrders = false;
+
+			while (rs.next()) {
+
+				hasOrders = true;
+
+				String status = rs.getString("order_status");
+			%>
+
+			<div class="col-12">
+
+				<div class="order-card">
+
+					<div class="row align-items-center">
+
+						<!-- IMAGE -->
+
+						<div class="col-12 col-md-3 text-center">
+
+							<img
+								src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image1")%>"
+								class="order-img">
+
+						</div>
+
+						<!-- DETAILS -->
+
+						<div class="col-12 col-md-6">
+
+							<h3>
+
+								<%=rs.getString("name")%>
+
+							</h3>
+
+							<p>
+
+								<%=rs.getString("processor")%>
+
+								•
+
+								<%=rs.getString("graphics")%>
+
+								•
+
+								<%=rs.getString("ram")%>
+
+								•
+
+								<%=rs.getString("storage")%>
+
+							</p>
+
+							<div class="order-info">
+
+								<span> Order ID: #ORD<%=rs.getInt("id")%>
+
+								</span> <span> Qty: <%=rs.getInt("quantity")%>
+
+								</span>
+
+							</div>
+
+							<div class="order-info mt-2">
+
+								<span> Payment: <%=rs.getString("payment_method")%>
+
+								</span> <span> Status: <%=status%>
+
+								</span>
+
+							</div>
+
+						</div>
+
+						<!-- PRICE -->
+
+						<div class="col-12 col-md-3 text-center">
+
+							<h2 class="price">
+
+								₹<%=rs.getDouble("price") * rs.getInt("quantity")%>
+
+							</h2>
+
+							<div class="status <%=status.toLowerCase()%>">
+
+								<%=status%>
+
+							</div>
+
+							<br>
+							<br> <a
+								href="single_laptop.jsp?id=<%=rs.getInt("laptop_id")%>"
+								class="track-btn"> View Details </a>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+			<%
+			}
+
+			if (!hasOrders) {
+			%>
+
+			<div class="col-12">
+
+				<div class="empty-box">
+
+					<h2>No Orders Found</h2>
+
+					<p>You have not placed any orders yet.</p>
+
+					<a href="laptops.jsp" class="track-btn"> Shop Now </a>
+
+				</div>
+
+			</div>
+
+			<%
+			}
+			%>
+
+		</div>
+
+	</section>
+
+	<!-- FOOTER -->
+
+	<footer class="footer">
+
+		<div class="container">
+
+			<div class="row">
+
+				<div class="col-12 col-lg-4">
+
+					<h2 class="footer-logo">TechLaptop</h2>
+
+					<p>Premium ecommerce platform for gaming and business laptops.
+
+					</p>
+
+				</div>
+
+				<div class="col-6 col-lg-2">
+
+					<h4>Links</h4>
+
+					<ul class="footer-links">
+
+						<li><a href="home.jsp">Home</a></li>
+						<li><a href="laptops.jsp">Laptops</a></li>
+						<li><a href="orders.jsp">Orders</a></li>
+
+					</ul>
+
+				</div>
+
+				<div class="col-6 col-lg-3">
+
+					<h4>Categories</h4>
+
+					<ul class="footer-links">
+
+						<li><a href="#">Gaming</a></li>
+						<li><a href="#">Business</a></li>
+						<li><a href="#">Student</a></li>
+
+					</ul>
+
+				</div>
+
+				<div class="col-12 col-lg-3">
+
+					<h4>Contact</h4>
+
+					<p>
+
+						<i class="bi bi-envelope"></i> support@techlaptop.com
+
+					</p>
+
+					<p>
+
+						<i class="bi bi-telephone"></i> +91 9325342724
+
+					</p>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</footer>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+		
+	</script>
+
+</body>
+
+</html>

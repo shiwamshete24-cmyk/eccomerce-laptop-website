@@ -1,0 +1,735 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+
+int id = Integer.parseInt(request.getParameter("id"));
+
+Connection conn = DbConnection.getConnection();
+
+String sql = "select * from laptops where id=?";
+
+PreparedStatement ps = conn.prepareStatement(sql);
+
+ps.setInt(1, id);
+
+ResultSet rs = ps.executeQuery();
+
+if(rs.next()){
+
+	int stock = rs.getInt("stock");
+
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+<%=rs.getString("name")%>
+</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<!-- ICON -->
+
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- FONT -->
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+	font-family:'Poppins',sans-serif;
+}
+
+body{
+	background:#0b1120;
+	color:white;
+	overflow-x:hidden;
+}
+
+/* NAVBAR */
+
+.navbar{
+	background:#081120;
+	padding:16px 35px;
+	border-bottom:1px solid rgba(255,255,255,0.08);
+	position:sticky;
+	top:0;
+	z-index:999;
+}
+
+.navbar-brand{
+	color:#00d9ff !important;
+	font-size:32px;
+	font-weight:800;
+	text-decoration:none;
+}
+
+/* MAIN SECTION */
+
+.main-section{
+	padding:50px 0;
+}
+
+/* PRODUCT BOX */
+
+.product-box{
+	background:#111827;
+	border-radius:30px;
+	padding:35px;
+	border:1px solid rgba(255,255,255,0.08);
+	box-shadow:0 10px 40px rgba(0,0,0,0.4);
+}
+
+/* IMAGE SIDE */
+
+.image-box{
+	background:white;
+	border-radius:25px;
+	padding:30px;
+	position:relative;
+}
+
+.main-image{
+	width:100%;
+	height:430px;
+	object-fit:contain;
+	transition:0.4s;
+}
+
+.main-image:hover{
+	transform:scale(1.04);
+}
+
+/* THUMBNAILS */
+
+.thumbnail-container{
+	display:flex;
+	gap:15px;
+	margin-top:20px;
+	justify-content:center;
+}
+
+.thumb{
+	width:85px;
+	height:85px;
+	object-fit:contain;
+	background:white;
+	border-radius:15px;
+	padding:8px;
+	cursor:pointer;
+	border:2px solid transparent;
+	transition:0.3s;
+}
+
+.thumb:hover{
+	border-color:#00d9ff;
+	transform:translateY(-4px);
+}
+
+/* DETAILS */
+
+.brand{
+	color:#00d9ff;
+	font-size:18px;
+	font-weight:600;
+	margin-bottom:10px;
+}
+
+.title{
+	font-size:40px;
+	font-weight:800;
+	line-height:1.4;
+	margin-bottom:18px;
+}
+
+.rating-row{
+	display:flex;
+	align-items:center;
+	gap:10px;
+	margin-bottom:25px;
+}
+
+.stars{
+	color:gold;
+	font-size:18px;
+}
+
+.review{
+	color:#bdbdbd;
+}
+
+/* PRICE */
+
+.price-box{
+	margin-bottom:25px;
+}
+
+.new-price{
+	font-size:42px;
+	font-weight:800;
+	color:#00d9ff;
+}
+
+.old-price{
+	font-size:24px;
+	color:#777;
+	text-decoration:line-through;
+	margin-left:14px;
+}
+
+.discount{
+	background:#00ff88;
+	color:black;
+	padding:5px 14px;
+	border-radius:30px;
+	font-size:14px;
+	font-weight:700;
+	margin-left:14px;
+}
+
+/* STOCK */
+
+.stock{
+	margin-bottom:25px;
+	font-size:18px;
+	font-weight:700;
+}
+
+.in-stock{
+	color:#00ff88;
+}
+
+.out-stock{
+	color:red;
+}
+
+/* BUTTONS */
+
+.button-group{
+	display:flex;
+	gap:15px;
+	margin-bottom:30px;
+}
+
+.buy-btn{
+	flex:1;
+	background:#00d9ff;
+	color:black;
+	border:none;
+	padding:15px;
+	border-radius:16px;
+	font-size:17px;
+	font-weight:700;
+	transition:0.4s;
+}
+
+.buy-btn:hover{
+	transform:translateY(-4px);
+	box-shadow:0 15px 30px rgba(0,217,255,0.25);
+}
+
+.cart-btn{
+	flex:1;
+	background:linear-gradient(to right,#00d9ff,#0059ff);
+	color:white;
+	border:none;
+	padding:15px;
+	border-radius:16px;
+	font-size:17px;
+	font-weight:700;
+	transition:0.4s;
+}
+
+.cart-btn:hover{
+	transform:translateY(-4px);
+	box-shadow:0 15px 30px rgba(0,217,255,0.25);
+}
+
+/* SPECIFICATIONS */
+
+.spec-box{
+	background:rgba(255,255,255,0.03);
+	border-radius:20px;
+	padding:25px;
+	margin-top:25px;
+}
+
+.spec-title{
+	font-size:24px;
+	font-weight:700;
+	margin-bottom:20px;
+	color:#00d9ff;
+}
+
+.spec-row{
+	display:flex;
+	justify-content:space-between;
+	padding:14px 0;
+	border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+.spec-row:last-child{
+	border-bottom:none;
+}
+
+.spec-name{
+	color:#aaa;
+	font-weight:500;
+}
+
+.spec-value{
+	font-weight:600;
+	text-align:right;
+}
+
+/* DESCRIPTION */
+
+.desc-box{
+	background:rgba(255,255,255,0.03);
+	border-radius:20px;
+	padding:25px;
+	margin-top:25px;
+}
+
+.desc-title{
+	font-size:24px;
+	font-weight:700;
+	color:#00d9ff;
+	margin-bottom:15px;
+}
+
+.desc{
+	color:#ccc;
+	line-height:1.9;
+	font-size:15px;
+}
+
+/* MOBILE */
+
+@media(max-width:991px){
+
+	.title{
+		font-size:30px;
+		margin-top:30px;
+	}
+
+	.main-image{
+		height:320px;
+	}
+
+}
+
+@media(max-width:576px){
+
+	.button-group{
+		flex-direction:column;
+	}
+
+	.title{
+		font-size:24px;
+	}
+
+	.new-price{
+		font-size:32px;
+	}
+
+	.thumb{
+		width:70px;
+		height:70px;
+	}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+	<a class="navbar-brand" href="home.jsp">
+		TechLaptop
+	</a>
+
+</nav>
+
+<!-- MAIN -->
+
+<div class="container main-section">
+
+	<div class="product-box">
+
+		<div class="row g-5 align-items-start">
+
+			<!-- LEFT SIDE -->
+
+			<div class="col-lg-6">
+
+				<div class="image-box">
+
+					<img
+					id="mainImage"
+					src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image1")%>"
+					class="main-image">
+
+				</div>
+
+				<!-- THUMBNAILS -->
+
+				<div class="thumbnail-container">
+
+					<img
+					src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image1")%>"
+					class="thumb"
+					onclick="changeImage(this.src)">
+
+					<img
+					src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image2")%>"
+					class="thumb"
+					onclick="changeImage(this.src)">
+
+					<img
+					src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image3")%>"
+					class="thumb"
+					onclick="changeImage(this.src)">
+
+				</div>
+
+			</div>
+
+			<!-- RIGHT SIDE -->
+
+			<div class="col-lg-6">
+
+				<div class="brand">
+					<%=rs.getString("brand")%>
+				</div>
+
+				<h1 class="title">
+					<%=rs.getString("name")%>
+				</h1>
+
+				<!-- RATING -->
+
+				<div class="rating-row">
+
+					<div class="stars">
+						★★★★★
+					</div>
+
+					<div class="review">
+
+						<%=rs.getDouble("rating")%>
+
+						(
+						<%=rs.getInt("total_reviews")%>
+						Reviews )
+
+					</div>
+
+				</div>
+
+				<!-- PRICE -->
+
+				<div class="price-box">
+
+					<span class="new-price">
+
+						₹<%=rs.getInt("price")%>
+
+					</span>
+
+					<span class="old-price">
+
+						₹<%=rs.getInt("old_price")%>
+
+					</span>
+
+					<span class="discount">
+
+						20% OFF
+
+					</span>
+
+				</div>
+
+				<!-- STOCK -->
+
+				<div class="stock">
+
+				<%
+				if(stock > 0){
+				%>
+
+					<span class="in-stock">
+
+						<i class="bi bi-check-circle-fill"></i>
+
+						In Stock
+						(
+						<%=stock%>
+						left )
+
+					</span>
+
+				<%
+				}else{
+				%>
+
+					<span class="out-stock">
+
+						<i class="bi bi-x-circle-fill"></i>
+
+						Out Of Stock
+
+					</span>
+
+				<%
+				}
+				%>
+
+				</div>
+
+				<!-- BUTTONS -->
+
+				<div class="button-group">
+
+					<button class="buy-btn">
+
+						<i class="bi bi-lightning-charge-fill"></i>
+						Buy Now
+
+					</button>
+
+					<form
+					action="AddToCart"
+					method="post"
+					style="flex:1;">
+
+						<input
+						type="hidden"
+						name="laptopId"
+						value="<%=rs.getInt("id")%>">
+
+						<button class="cart-btn w-100">
+
+							<i class="bi bi-cart-plus"></i>
+							Add To Cart
+
+						</button>
+
+					</form>
+
+				</div>
+
+				<!-- SPECIFICATIONS -->
+
+				<div class="spec-box">
+
+					<div class="spec-title">
+						Specifications
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Processor
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("processor")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							RAM
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("ram")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Storage
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("storage")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Graphics
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("graphics")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Display Size
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("display_size")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Display Type
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("display_type")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Battery
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("battery")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Operating System
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("operating_system")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Color
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("color")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Weight
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("weight")%>
+						</div>
+
+					</div>
+
+					<div class="spec-row">
+
+						<div class="spec-name">
+							Warranty
+						</div>
+
+						<div class="spec-value">
+							<%=rs.getString("warranty")%>
+						</div>
+
+					</div>
+
+				</div>
+
+				<!-- DESCRIPTION -->
+
+				<div class="desc-box">
+
+					<div class="desc-title">
+						Product Description
+					</div>
+
+					<div class="desc">
+
+						<%=rs.getString("description")%>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+<!-- IMAGE CHANGE SCRIPT -->
+
+<script>
+
+function changeImage(imagePath){
+
+	document.getElementById("mainImage").src = imagePath;
+
+}
+
+</script>
+
+</body>
+
+</html>
+
+<%
+}
+%>

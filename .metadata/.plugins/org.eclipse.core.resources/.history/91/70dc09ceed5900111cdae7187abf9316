@@ -1,0 +1,267 @@
+<style>
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Poppins', sans-serif;
+}
+
+body {
+	background: #eef2f7;
+}
+
+/* SIDEBAR */
+.sidebar {
+	width: 280px;
+	height: 100vh;
+	position: fixed;
+	background: linear-gradient(180deg, #111827, #1f2937);
+	padding: 30px 20px;
+}
+
+.logo {
+	color: white;
+	font-size: 34px;
+	font-weight: 800;
+	margin-bottom: 50px;
+	text-align: center;
+}
+
+.sidebar-menu {
+	list-style: none;
+	padding: 0;
+}
+
+.sidebar-menu li {
+	margin-bottom: 12px;
+}
+
+.sidebar-menu a {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	padding: 15px 18px;
+	color: #d1d5db;
+	text-decoration: none;
+	border-radius: 16px;
+	font-size: 15px;
+	font-weight: 500;
+	transition: 0.3s;
+}
+
+.sidebar-menu a:hover {
+	background: linear-gradient(135deg, #d946ef, #9333ea);
+	color: white;
+	transform: translateX(5px);
+}
+
+/* MAIN */
+.main {
+	margin-left: 280px;
+	padding: 35px;
+}
+
+/* TOPBAR */
+.topbar {
+	background: white;
+	padding: 25px 30px;
+	border-radius: 25px;
+	margin-bottom: 35px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.topbar h2 {
+	font-size: 32px;
+	font-weight: 800;
+}
+
+/* PROFILE */
+.profile-box {
+	background: white;
+	padding: 40px;
+	border-radius: 30px;
+	box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+	margin-bottom: 35px;
+}
+
+.profile-header {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+}
+
+.profile-image {
+	width: 140px;
+	height: 140px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #d946ef, #9333ea);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 55px;
+	font-weight: 700;
+	color: white;
+	box-shadow: 0 10px 30px rgba(217, 70, 239, 0.35);
+}
+
+.profile-info h1 {
+	font-size: 42px;
+	font-weight: 800;
+	margin-bottom: 10px;
+}
+
+.profile-info p {
+	color: #6b7280;
+	font-size: 16px;
+	margin-bottom: 5px;
+}
+
+/* ANALYTICS */
+.analytics-card {
+	background: white;
+	padding: 30px;
+	border-radius: 28px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+	height: 100%;
+	transition: 0.3s;
+}
+
+.analytics-card:hover {
+	transform: translateY(-5px);
+}
+
+.card-icon {
+	width: 70px;
+	height: 70px;
+	border-radius: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 30px;
+	color: white;
+	margin-bottom: 25px;
+}
+
+.bg1 {
+	background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.bg2 {
+	background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.bg3 {
+	background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.bg4 {
+	background: linear-gradient(135deg, #d946ef, #9333ea);
+}
+
+.analytics-card h5 {
+	color: #6b7280;
+	margin-bottom: 10px;
+}
+
+.analytics-card h1 {
+	font-size: 42px;
+	font-weight: 800;
+}
+
+/* TABLE */
+.table-box {
+	background: white;
+	padding: 30px;
+	border-radius: 30px;
+	box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+	margin-top: 35px;
+}
+
+.table-title {
+	font-size: 30px;
+	font-weight: 800;
+	margin-bottom: 25px;
+}
+
+.table {
+	vertical-align: middle;
+}
+
+.table thead {
+	background: #111827;
+	color: white;
+}
+
+.table th {
+	padding: 18px;
+	border: none;
+}
+
+.table td {
+	padding: 18px;
+}
+
+/* STATUS */
+.status {
+	padding: 8px 15px;
+	border-radius: 50px;
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.pending {
+	background: #fff7ed;
+	color: #f97316;
+}
+
+.delivered {
+	background: #ecfdf5;
+	color: #10b981;
+}
+
+/* BUTTONS */
+.action-buttons {
+	margin-top: 35px;
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+}
+
+.action-btn {
+	padding: 14px 25px;
+	border-radius: 15px;
+	text-decoration: none;
+	color: white;
+	font-weight: 700;
+	transition: 0.3s;
+}
+
+.btn1 {
+	background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.btn2 {
+	background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.action-btn:hover {
+	transform: translateY(-4px);
+	color: white;
+}
+
+/* MOBILE */
+@media ( max-width :991px) {
+	.sidebar {
+		width: 100%;
+		height: auto;
+		position: relative;
+	}
+	.main {
+		margin-left: 0;
+	}
+	.profile-header {
+		flex-direction: column;
+		text-align: center;
+	}
+}
+</style>

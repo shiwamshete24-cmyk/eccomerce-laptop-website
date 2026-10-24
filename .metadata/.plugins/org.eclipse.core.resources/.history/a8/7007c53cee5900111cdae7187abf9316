@@ -1,0 +1,46 @@
+
+
+body{
+
+	height:100vh;
+
+	display:flex;
+
+	justify-content:center;
+
+	align-items:center;
+
+	background:#111827;
+
+	font-family:Poppins;
+
+}
+
+.otp-box{
+
+	width:400px;
+
+	background:#1f2937;
+
+	padding:40px;
+
+	border-radius:20px;
+
+	color:white;
+
+}
+
+input{
+
+	height:55px !important;
+
+	margin-bottom:20px;
+
+}
+
+button{
+
+	height:55px;
+
+}
+

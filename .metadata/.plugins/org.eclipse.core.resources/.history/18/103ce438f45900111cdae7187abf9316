@@ -1,0 +1,171 @@
+package in.sp.Controllers;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import in.sp.connection.DbConnection;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@WebServlet("/VerifyOtp")
+
+public class VerifyOtp extends HttpServlet {
+
+	@Override
+	protected void doPost(
+	HttpServletRequest req,
+	HttpServletResponse resp)
+
+	throws ServletException, IOException {
+
+		resp.setContentType("text/html");
+
+		PrintWriter out =
+		resp.getWriter();
+
+		/* =========================
+		   GET SESSION
+		========================= */
+
+		HttpSession session =
+		req.getSession();
+
+		/* =========================
+		   GET OTP
+		========================= */
+
+		int sessionOtp =
+		(Integer) session.getAttribute("otp");
+
+		int enteredOtp =
+		Integer.parseInt(
+		req.getParameter("otp"));
+
+		/* =========================
+		   OTP VERIFY
+		========================= */
+
+		if(sessionOtp == enteredOtp) {
+
+			/* =========================
+			   GET USER DATA
+			========================= */
+
+			String username =
+			(String) session.getAttribute(
+			"username");
+
+			String email =
+			(String) session.getAttribute(
+			"email");
+
+			String password =
+			(String) session.getAttribute(
+			"password");
+
+			try {
+
+				/* =========================
+				   DATABASE CONNECTION
+				========================= */
+
+				Connection conn =
+				DbConnection.getConnection();
+
+				/* =========================
+				   INSERT QUERY
+				========================= */
+
+				String sql =
+				"insert into users(name,email,password,confirm_password) values(?,?,?,?)";
+
+				PreparedStatement ps =
+				conn.prepareStatement(sql);
+
+				ps.setString(1, username);
+
+				ps.setString(2, email);
+
+				ps.setString(3, password);
+
+				ps.setString(4, password);
+
+				/* =========================
+				   EXECUTE QUERY
+				========================= */
+
+				int result =
+				ps.executeUpdate();
+
+				/* =========================
+				   SUCCESS
+				========================= */
+
+				if(result > 0) {
+
+					/* REMOVE SESSION DATA */
+
+					session.removeAttribute("otp");
+
+					session.removeAttribute("username");
+
+					session.removeAttribute("email");
+
+					session.removeAttribute("password");
+
+					out.println(
+
+					"<script>alert('Signup Successful');window.location='login.html';</script>"
+
+					);
+
+				}
+				else {
+
+					out.println(
+
+					"<script>alert('Signup Failed');window.location='register.html';</script>"
+
+					);
+
+				}
+
+			}
+			catch(Exception e) {
+
+				e.printStackTrace();
+
+				out.println(
+
+				"<script>alert('user entry already created');window.location='register.html';</script>"
+
+				);
+
+			}
+
+		}
+
+		/* =========================
+		   INVALID OTP
+		========================= */
+
+		else {
+
+			out.println(
+
+			"<script>alert('Invalid OTP');window.location='verify_otp.jsp';</script>"
+
+			);
+
+		}
+
+	}
+
+}

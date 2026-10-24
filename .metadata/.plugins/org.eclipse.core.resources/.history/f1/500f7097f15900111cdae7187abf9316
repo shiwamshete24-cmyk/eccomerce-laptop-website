@@ -1,0 +1,84 @@
+package in.sp.Controllers;
+
+import java.io.IOException;
+import java.util.Random;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@WebServlet("/ResendOtp")
+
+public class ResendOtp extends HttpServlet {
+
+	@Override
+	protected void doGet(
+	HttpServletRequest req,
+	HttpServletResponse resp)
+
+	throws ServletException, IOException {
+
+		/* =========================
+		   SESSION
+		========================= */
+
+		HttpSession session =
+		req.getSession();
+
+		/* =========================
+		   GENERATE NEW OTP
+		========================= */
+
+		Random random = new Random();
+
+		int otp =
+		100000 + random.nextInt(900000);
+
+		/* SAVE OTP */
+
+		session.setAttribute("otp", otp);
+
+		/* =========================
+		   GET EMAIL
+		========================= */
+
+		String email =
+		(String) session.getAttribute("email");
+
+		/* =========================
+		   SEND EMAIL
+		========================= */
+
+		boolean status =
+				EmailUtility.sendOtp(email, otp);
+
+		/* =========================
+		   RESPONSE
+		========================= */
+
+		if(status) {
+
+			resp.getWriter().println(
+
+			"<script>alert('OTP Resent Successfully');window.location='verify_otp.jsp';</script>"
+
+			);
+
+		}
+
+		else {
+
+			resp.getWriter().println(
+
+			"<script>alert('Failed To Resend OTP');window.location='verify_otp.jsp';</script>"
+
+			);
+
+		}
+
+	}
+
+}

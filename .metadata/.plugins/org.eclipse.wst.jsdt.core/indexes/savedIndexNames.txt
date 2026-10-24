@@ -1,0 +1,8 @@
+INDEX VERSION 1.4+D:\My Projects\eccomerce laptop website\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+1380819875.index
+73978511.index
+3485400816.index
+2318547757.index
+2121671900.index
+1793591934.index
+2090597222.index

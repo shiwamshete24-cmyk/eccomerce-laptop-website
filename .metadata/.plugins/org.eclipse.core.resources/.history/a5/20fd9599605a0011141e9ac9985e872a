@@ -1,0 +1,133 @@
+package in.sp.Controllers;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Properties;
+import java.util.Random;
+
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@WebServlet("/register")
+
+public class Register extends HttpServlet {
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+
+			throws ServletException, IOException {
+
+		PrintWriter out = resp.getWriter();
+
+		resp.setContentType("text/html");
+
+		String username = req.getParameter("username");
+
+		String email = req.getParameter("email");
+
+		String password = req.getParameter("password");
+
+		String confirmPassword = req.getParameter("confirm-password");
+
+	
+
+		/* PASSWORD CHECK */
+
+		if (!password.equals(confirmPassword)) {
+
+			out.println("<script>alert('Passwords Not Match');window.location='register.html';</script>");
+
+			return;
+
+		}
+
+		/* GENERATE OTP */
+
+		Random random = new Random();
+
+		int otp = 100000 + random.nextInt(900000);
+
+		/* STORE DATA IN SESSION */
+
+		HttpSession session = req.getSession();
+
+		session.setAttribute("username", username);
+
+		session.setAttribute("email", email);
+
+		session.setAttribute("password", password);
+
+		session.setAttribute("otp", otp);
+
+		/* EMAIL DETAILS */
+
+		String senderEmail = "shiwamshete24@gmail.com";
+
+		String senderPassword = "evdabbhxrwdcvzud";
+
+		Properties props = new Properties();
+
+		props.put("mail.smtp.host", "smtp.gmail.com");
+
+		props.put("mail.smtp.port", "587");
+
+		props.put("mail.smtp.auth", "true");
+
+		props.put("mail.smtp.starttls.enable", "true");
+
+		Session mailSession = Session.getInstance(props,
+
+				new Authenticator() {
+
+					protected PasswordAuthentication getPasswordAuthentication() {
+
+						return new PasswordAuthentication(senderEmail, senderPassword);
+
+					}
+
+				});
+
+		try {
+
+			Message message = new MimeMessage(mailSession);
+
+			message.setFrom(new InternetAddress(senderEmail));
+
+			message.setRecipients(Message.RecipientType.TO,
+
+					InternetAddress.parse(email));
+
+			message.setSubject("TechLaptop Email Verification OTP");
+
+			message.setText("Your OTP is : " + otp);
+
+			Transport.send(message);
+
+			RequestDispatcher rd = req.getRequestDispatcher("verify_otp.jsp");
+
+			rd.forward(req, resp);
+
+		} catch (Exception e) {
+
+			e.printStackTrace();
+
+			out.println("<script>alert('OTP Send Failed');window.location='register.html';</script>");
+
+		}
+
+	}
+
+}

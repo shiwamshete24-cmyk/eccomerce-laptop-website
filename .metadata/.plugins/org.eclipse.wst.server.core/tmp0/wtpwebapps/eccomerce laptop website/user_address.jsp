@@ -1,0 +1,433 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+int orderId = Integer.parseInt(request.getParameter("id"));
+
+Connection conn = DbConnection.getConnection();
+
+PreparedStatement ps = conn.prepareStatement(
+"select * from orders where id=?");
+
+ps.setInt(1, orderId);
+
+ResultSet rs = ps.executeQuery();
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+	Order User Details
+
+</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<!-- ICONS -->
+
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<link href="css/user_address.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+	<h1 class="logo">
+
+		TechLaptop
+
+	</h1>
+
+	<ul class="menu">
+
+		<li>
+
+			<a href="admin_dashboard.jsp">
+
+				<i class="bi bi-grid-fill"></i>
+
+				Dashboard
+
+			</a>
+
+		</li>
+
+		<li>
+
+			<a href="admin_profile.jsp">
+
+				<i class="bi bi-person-circle"></i>
+
+				Profile
+
+			</a>
+
+		</li>
+
+		<li>
+
+			<a href="admin_users.jsp">
+
+				<i class="bi bi-people-fill"></i>
+
+				Users
+
+			</a>
+
+		</li>
+
+		<li>
+
+			<a href="admin_laptops.jsp">
+
+				<i class="bi bi-laptop"></i>
+
+				Laptops
+
+			</a>
+
+		</li>
+
+		<li>
+
+			<a href="admin_orders.jsp"
+			   class="active">
+
+				<i class="bi bi-bag-check-fill"></i>
+
+				Orders
+
+			</a>
+
+		</li>
+
+		<li>
+
+			<a href="Logout">
+
+				<i class="bi bi-box-arrow-right"></i>
+
+				Logout
+
+			</a>
+
+		</li>
+
+	</ul>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+	<!-- TOP -->
+
+	<div class="top-box">
+
+		<h1>
+
+			Order User Details
+
+		</h1>
+
+	</div>
+
+	<!-- DETAILS -->
+
+	<div class="details-box">
+
+		<%
+		if(rs.next()){
+		%>
+
+		<div class="row g-4">
+
+			<!-- NAME -->
+
+			<div class="col-md-6">
+
+				<div class="info-card">
+
+					<i class="bi bi-person-fill"></i>
+
+					<h5>
+
+						Customer Name
+
+					</h5>
+
+					<p>
+
+						<%=rs.getString("full_name")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- EMAIL -->
+
+			<div class="col-md-6">
+
+				<div class="info-card">
+
+					<i class="bi bi-envelope-fill"></i>
+
+					<h5>
+
+						Email Address
+
+					</h5>
+
+					<p>
+
+						<%=rs.getString("user_email")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- PHONE -->
+
+			<div class="col-md-6">
+
+				<div class="info-card">
+
+					<i class="bi bi-telephone-fill"></i>
+
+					<h5>
+
+						Phone Number
+
+					</h5>
+
+					<p>
+
+						<%=rs.getString("phone")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- CITY -->
+
+			<div class="col-md-6">
+
+				<div class="info-card">
+
+					<i class="bi bi-buildings-fill"></i>
+
+					<h5>
+
+						City
+
+					</h5>
+
+					<p>
+
+						<%=rs.getString("city")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- STATE -->
+
+			<div class="col-md-6">
+
+				<div class="info-card">
+
+					<i class="bi bi-globe-central-south-asia"></i>
+
+					<h5>
+
+						State
+
+					</h5>
+
+					<p>
+
+						<%=rs.getString("state")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- PINCODE -->
+
+			<div class="col-md-6">
+
+				<div class="info-card">
+
+					<i class="bi bi-mailbox2"></i>
+
+					<h5>
+
+						Pincode
+
+					</h5>
+
+					<p>
+
+						<%=rs.getString("pincode")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- PAYMENT -->
+
+			<div class="col-md-6">
+
+				<div class="info-card">
+
+					<i class="bi bi-credit-card-fill"></i>
+
+					<h5>
+
+						Payment Method
+
+					</h5>
+
+					<p>
+
+						<%=rs.getString("payment_method")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- STATUS -->
+
+			<div class="col-md-6">
+
+				<div class="info-card">
+
+					<i class="bi bi-bag-check-fill"></i>
+
+					<h5>
+
+						Order Status
+
+					</h5>
+
+					<p>
+
+						<%=rs.getString("order_status")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- TOTAL -->
+
+			<div class="col-md-12">
+
+				<div class="info-card">
+
+					<i class="bi bi-currency-rupee"></i>
+
+					<h5>
+
+						Total Amount
+
+					</h5>
+
+					<p>
+
+						₹<%=rs.getDouble("total_amount")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<!-- ADDRESS -->
+
+		<div class="address-box">
+
+			<h3>
+
+				<i class="bi bi-geo-alt-fill"></i>
+
+				Shipping Address
+
+			</h3>
+
+			<p>
+
+				<%=rs.getString("address")%>
+
+			</p>
+
+		</div>
+
+		<%
+		}
+		%>
+
+		<a href="admin_orders.jsp"
+		   class="back-btn">
+
+			<i class="bi bi-arrow-left"></i>
+
+			Back To Orders
+
+		</a>
+
+	</div>
+
+</div>
+
+</body>
+
+</html>

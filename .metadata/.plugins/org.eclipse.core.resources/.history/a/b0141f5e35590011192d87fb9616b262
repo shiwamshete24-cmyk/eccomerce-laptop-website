@@ -1,0 +1,893 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ page import="in.sp.model.User"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+User user = (User) session.getAttribute("userData");
+
+if (user == null) {
+	response.sendRedirect("login.html");
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cart</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- ICONS -->
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+	rel="stylesheet">
+
+<style>
+
+*{
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+	font-family:'Poppins',sans-serif;
+}
+
+body{
+	background:#edf1f5;
+	color:#111827;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar{
+	background:white;
+	padding:18px 35px;
+	box-shadow:0 2px 20px rgba(0,0,0,0.05);
+	position:sticky;
+	top:0;
+	z-index:999;
+}
+
+.navbar-brand{
+	font-size:32px;
+	font-weight:800;
+	color:#0077ff !important;
+}
+
+.nav-link{
+	color:#374151 !important;
+	font-weight:600;
+	margin-left:20px;
+	transition:0.3s;
+}
+
+.nav-link:hover{
+	color:#0077ff !important;
+}
+
+.custom-btn{
+	background:#0077ff;
+	color:white;
+	padding:10px 18px;
+	border-radius:12px;
+	text-decoration:none;
+	font-weight:600;
+	transition:0.3s;
+}
+
+.custom-btn:hover{
+	background:#005fe0;
+	color:white;
+}
+
+.user-btn{
+	color:#111827 !important;
+	font-weight:600;
+	cursor:pointer;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.cart-hero{
+	padding:50px 0 30px;
+	text-align:center;
+}
+
+.cart-hero h1{
+	font-size:55px;
+	font-weight:800;
+}
+
+.cart-hero span{
+	color:#0077ff;
+}
+
+.cart-hero p{
+	color:#6b7280;
+	margin-top:10px;
+	font-size:17px;
+}
+
+/* =========================
+   CART CARD
+========================= */
+
+.cart-card{
+	background:white;
+	padding:25px;
+	border-radius:24px;
+	margin-bottom:25px;
+	box-shadow:0 8px 25px rgba(0,0,0,0.05);
+	transition:0.3s;
+}
+
+.cart-card:hover{
+	transform:translateY(-4px);
+}
+
+.cart-img{
+	width:100%;
+	height:170px;
+	object-fit:contain;
+	background:#fff;
+	border-radius:18px;
+	padding:10px;
+	border:1px solid #eee;
+}
+
+.cart-card h3{
+	font-size:24px;
+	font-weight:700;
+	margin-bottom:10px;
+}
+
+.cart-card p{
+	color:#6b7280;
+	font-size:14px;
+	line-height:1.8;
+}
+
+.stock{
+	color:#00b67a;
+	font-weight:700;
+	font-size:14px;
+}
+
+/* =========================
+   DETAILS BUTTON
+========================= */
+
+.details-btn{
+	display:inline-flex;
+	align-items:center;
+	gap:8px;
+	background:#0077ff;
+	color:white;
+	text-decoration:none;
+	padding:10px 18px;
+	border-radius:12px;
+	font-size:14px;
+	font-weight:600;
+	transition:0.3s;
+}
+
+.details-btn:hover{
+	background:#005fe0;
+	color:white;
+	transform:translateY(-3px);
+	box-shadow:0 8px 18px rgba(0,119,255,0.2);
+}
+
+/* =========================
+   QUANTITY
+========================= */
+
+.quantity-box{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	gap:10px;
+	margin-top:10px;
+}
+
+.quantity-box button{
+	width:38px;
+	height:38px;
+	border:none;
+	border-radius:10px;
+	background:#0077ff;
+	color:white;
+	font-size:18px;
+	font-weight:700;
+}
+
+.quantity-box input{
+	width:55px;
+	height:38px;
+	border:1px solid #ddd;
+	border-radius:10px;
+	text-align:center;
+	font-weight:700;
+}
+
+/* =========================
+   PRICE
+========================= */
+
+.price{
+	font-size:25px;
+	font-weight:800;
+	color:#111827;
+	margin-bottom:15px;
+}
+
+/* =========================
+   REMOVE BTN
+========================= */
+
+.remove-btn{
+	width:45px;
+	height:45px;
+	border:none;
+	border-radius:12px;
+	background:#fee2e2;
+	color:red;
+	font-size:18px;
+	transition:0.3s;
+}
+
+.remove-btn:hover{
+	background:red;
+	color:white;
+}
+
+/* =========================
+   SUMMARY
+========================= */
+
+.summary-box{
+	background:white;
+	padding:30px;
+	border-radius:24px;
+	box-shadow:0 8px 25px rgba(0,0,0,0.05);
+	position:sticky;
+	top:100px;
+}
+
+.summary-box h2{
+	font-size:30px;
+	font-weight:800;
+	margin-bottom:25px;
+}
+
+.summary-item{
+	display:flex;
+	justify-content:space-between;
+	margin-bottom:18px;
+	font-size:17px;
+}
+
+.discount{
+	color:#00b67a;
+	font-weight:700;
+}
+
+.total{
+	font-size:24px;
+	font-weight:800;
+}
+
+.checkout-btn{
+	width:100%;
+	background:#ff9f00;
+	color:white;
+	border:none;
+	padding:16px;
+	border-radius:14px;
+	font-size:18px;
+	font-weight:700;
+	margin-top:25px;
+	transition:0.3s;
+}
+
+.checkout-btn:hover{
+	background:#f59e0b;
+	transform:translateY(-3px);
+	color:white;
+}
+
+/* =========================
+   EMPTY CART
+========================= */
+
+.empty-cart{
+	text-align:center;
+	padding:60px 20px;
+	background:white;
+	border-radius:24px;
+	box-shadow:0 8px 25px rgba(0,0,0,0.05);
+}
+
+.empty-cart h2{
+	font-size:35px;
+	font-weight:800;
+	margin-bottom:15px;
+}
+
+.empty-cart p{
+	color:#6b7280;
+	margin-bottom:25px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+	background:#111827;
+	color:white;
+	padding:60px 0;
+	margin-top:60px;
+}
+
+.footer-logo{
+	font-size:34px;
+	font-weight:800;
+	margin-bottom:18px;
+}
+
+.footer h4{
+	margin-bottom:18px;
+	font-weight:700;
+}
+
+.footer-links{
+	list-style:none;
+	padding:0;
+}
+
+.footer-links li{
+	margin-bottom:10px;
+}
+
+.footer-links a{
+	color:#d1d5db;
+	text-decoration:none;
+}
+
+.footer-links a:hover{
+	color:white;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:991px){
+
+	.summary-box{
+		position:relative;
+		top:0;
+	}
+
+}
+
+@media(max-width:576px){
+
+	.cart-hero h1{
+		font-size:38px;
+	}
+
+	.quantity-box{
+		margin:20px 0;
+	}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-light">
+
+	<div class="container-fluid">
+
+		<a class="navbar-brand" href="home.jsp">
+			TechLaptop
+		</a>
+
+	</div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="cart-hero">
+
+	<div class="container text-center">
+
+		<h1>
+
+			Shopping <span>Cart</span>
+
+		</h1>
+
+		<p>
+
+			Review your selected premium laptops before checkout.
+
+		</p>
+
+	</div>
+
+</section>
+
+<!-- CART -->
+
+<section class="container pb-5">
+
+	<div class="row g-4">
+
+		<!-- LEFT -->
+
+		<div class="col-12 col-lg-8">
+
+		<%
+
+		Connection conn = DbConnection.getConnection();
+
+		String sql =
+		"select cart.id as cart_id, cart.quantity, laptops.* " +
+		"from cart " +
+		"join laptops on cart.laptop_id = laptops.id " +
+		"where cart.user_email=? and cart.status='active'";
+
+		PreparedStatement ps = conn.prepareStatement(sql);
+
+		ps.setString(1, user.getEmail());
+
+		ResultSet rs = ps.executeQuery();
+
+		double subtotal = 0;
+
+		boolean hasItems = false;
+
+		while(rs.next()){
+
+			hasItems = true;
+
+			double total =
+			rs.getInt("price") * rs.getInt("quantity");
+
+			subtotal += total;
+
+		%>
+
+		<!-- CART CARD -->
+
+		<div class="cart-card">
+
+			<div class="row align-items-center">
+
+				<!-- IMAGE -->
+
+				<div class="col-12 col-md-3 text-center">
+
+					<img
+					src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image1")%>"
+					class="cart-img">
+
+				</div>
+
+				<!-- DETAILS -->
+
+				<div class="col-12 col-md-5">
+
+					<h3>
+
+						<%=rs.getString("name")%>
+
+					</h3>
+
+					<p>
+
+						<%=rs.getString("processor")%>
+
+						•
+
+						<%=rs.getString("graphics")%>
+
+						•
+
+						<%=rs.getString("ram")%>
+
+						•
+
+						<%=rs.getString("storage")%>
+
+					</p>
+
+					<span class="stock">
+
+						In Stock
+
+					</span>
+
+					<br><br>
+
+					<a
+					href="single_laptop.jsp?id=<%=rs.getInt("id")%>"
+					class="details-btn">
+
+						<i class="bi bi-eye-fill"></i>
+
+						Show Details
+
+					</a>
+
+				</div>
+
+				<!-- QUANTITY -->
+
+				<div class="col-12 col-md-2 text-center">
+
+					<div class="quantity-box">
+
+						<a
+						href="UpdateCartQuantity?id=<%=rs.getInt("cart_id")%>&action=minus">
+
+							<button>-</button>
+
+						</a>
+
+						<input
+						type="text"
+						value="<%=rs.getInt("quantity")%>"
+						readonly>
+
+						<a
+						href="UpdateCartQuantity?id=<%=rs.getInt("cart_id")%>&action=plus">
+
+							<button>+</button>
+
+						</a>
+
+					</div>
+
+				</div>
+
+				<!-- PRICE -->
+
+				<div class="col-12 col-md-2 text-center">
+
+					<h2 class="price">
+
+						₹<%=total%>
+
+					</h2>
+
+					<a
+					href="RemoveCartItem?id=<%=rs.getInt("cart_id")%>">
+
+						<button class="remove-btn">
+
+							<i class="bi bi-trash"></i>
+
+						</button>
+
+					</a>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<%
+		}
+
+		if(!hasItems){
+		%>
+
+		<div class="empty-cart">
+
+			<h2>
+
+				Your Cart Is Empty
+
+			</h2>
+
+			<p>
+
+				Add premium laptops into your cart.
+
+			</p>
+
+			<a
+			href="laptops.jsp"
+			class="custom-btn">
+
+				Continue Shopping
+
+			</a>
+
+		</div>
+
+		<%
+		}
+		%>
+
+		</div>
+
+		<!-- RIGHT -->
+
+		<div class="col-12 col-lg-4">
+
+		<%
+
+		double shipping = 0;
+
+		double discount = 0;
+
+		if(hasItems){
+
+			shipping = 499;
+
+			discount = 10000;
+
+		}
+
+		double finalTotal =
+		subtotal + shipping - discount;
+
+		if(finalTotal < 0){
+
+			finalTotal = 0;
+
+		}
+
+		%>
+
+		<div class="summary-box">
+
+			<h2>
+
+				Order Summary
+
+			</h2>
+
+			<div class="summary-item">
+
+				<span>
+
+					Subtotal
+
+				</span>
+
+				<span>
+
+					₹<%=subtotal%>
+
+				</span>
+
+			</div>
+
+			<div class="summary-item">
+
+				<span>
+
+					Shipping
+
+				</span>
+
+				<span>
+
+					₹<%=shipping%>
+
+				</span>
+
+			</div>
+
+			<div class="summary-item">
+
+				<span>
+
+					Discount
+
+				</span>
+
+				<span class="discount">
+
+					- ₹<%=discount%>
+
+				</span>
+
+			</div>
+
+			<hr>
+
+			<div class="summary-item total">
+
+				<span>
+
+					Total
+
+				</span>
+
+				<span>
+
+					₹<%=finalTotal%>
+
+				</span>
+
+			</div>
+
+			<%
+
+			if(hasItems){
+
+			%>
+
+			<a
+			href="checkout.jsp"
+			class="checkout-btn d-block text-center text-decoration-none">
+
+				Proceed To Checkout
+
+			</a>
+
+			<%
+
+			}else{
+
+			%>
+
+			<button
+			class="checkout-btn"
+			disabled
+			style="
+			opacity:0.6;
+			cursor:not-allowed;">
+
+				Cart Is Empty
+
+			</button>
+
+			<%
+
+			}
+
+			%>
+
+		</div>
+
+		</div>
+
+	</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+	<div class="container">
+
+		<div class="row">
+
+			<div class="col-12 col-lg-4">
+
+				<h2 class="footer-logo">
+
+					TechLaptop
+
+				</h2>
+
+				<p>
+
+					Premium ecommerce platform for gaming and business laptops.
+
+				</p>
+
+			</div>
+
+			<div class="col-6 col-lg-2">
+
+				<h4>
+
+					Links
+
+				</h4>
+
+				<ul class="footer-links">
+
+					<li><a href="#">Home</a></li>
+					<li><a href="#">Laptops</a></li>
+					<li><a href="#">Cart</a></li>
+
+				</ul>
+
+			</div>
+
+			<div class="col-6 col-lg-3">
+
+				<h4>
+
+					Categories
+
+				</h4>
+
+				<ul class="footer-links">
+
+					<li><a href="#">Gaming</a></li>
+					<li><a href="#">Business</a></li>
+					<li><a href="#">Student</a></li>
+
+				</ul>
+
+			</div>
+
+			<div class="col-12 col-lg-3">
+
+				<h4>
+
+					Contact
+
+				</h4>
+
+				<p>
+
+					<i class="bi bi-envelope"></i>
+
+					support@techlaptop.com
+
+				</p>
+
+				<p>
+
+					<i class="bi bi-telephone"></i>
+
+					+91 9876543210
+
+				</p>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</footer>
+
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+
+</html>

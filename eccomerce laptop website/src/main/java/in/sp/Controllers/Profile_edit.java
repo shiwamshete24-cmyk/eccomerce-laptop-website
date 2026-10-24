@@ -1,0 +1,194 @@
+package in.sp.Controllers;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+
+import in.sp.connection.DbConnection;
+import in.sp.model.User;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+
+@WebServlet("/UpdateProfile")
+@MultipartConfig
+public class Profile_edit extends HttpServlet {
+
+	@Override
+	protected void doPost(
+			HttpServletRequest req,
+			HttpServletResponse resp)
+			throws ServletException, IOException {
+
+		resp.setContentType("text/html");
+
+		try {
+
+			/* GET DATA */
+
+			String name = req.getParameter("name");
+			String email = req.getParameter("email");
+			String phone = req.getParameter("phone");
+			String gender = req.getParameter("gender");
+			String dob = req.getParameter("dob");
+			String country = req.getParameter("country");
+			String language = req.getParameter("language");
+			String city = req.getParameter("city");
+			String pincode = req.getParameter("pincode");
+			String address = req.getParameter("address");
+
+			/* IMAGE */
+
+			Part part = req.getPart("image");
+
+			String imageName =
+					Paths.get(part.getSubmittedFileName())
+					.getFileName()
+					.toString();
+
+			/* DEFAULT IMAGE */
+
+			if(imageName == null || imageName.equals("")) {
+
+				imageName = "default.png";
+
+			}
+
+			/* DATABASE */
+
+			Connection conn =
+					DbConnection.getConnection();
+
+			String sql_query =
+			"UPDATE users SET "
+			+ "name=?, "
+			+ "phone=?, "
+			+ "gender=?, "
+			+ "dob=?, "
+			+ "country=?, "
+			+ "language=?, "
+			+ "city=?, "
+			+ "pincode=?, "
+			+ "address=?, "
+			+ "image=? "
+			+ "WHERE email=?";
+
+			PreparedStatement ps =
+					conn.prepareStatement(sql_query);
+
+			ps.setString(1, name);
+			ps.setString(2, phone);
+			ps.setString(3, gender);
+
+			/* DATE */
+
+			if(dob != null && !dob.equals("")) {
+
+				ps.setDate(4, Date.valueOf(dob));
+
+			}
+			else {
+
+				ps.setDate(4, null);
+
+			}
+
+			ps.setString(5, country);
+			ps.setString(6, language);
+			ps.setString(7, city);
+			ps.setString(8, pincode);
+			ps.setString(9, address);
+			ps.setString(10, imageName);
+
+			/* WHERE EMAIL */
+
+			ps.setString(11, email);
+
+			int count = ps.executeUpdate();
+
+			if(count > 0) {
+
+				/* SAVE IMAGE */
+
+				String uploadPath =
+						getServletContext()
+						.getRealPath("")
+						+ "img";
+
+				File file =
+						new File(uploadPath);
+
+				if(!file.exists()) {
+
+					file.mkdir();
+
+				}
+
+				part.write(uploadPath
+						+ File.separator
+						+ imageName);
+
+				/* UPDATE SESSION */
+
+				HttpSession session =
+						req.getSession();
+
+				User user =
+						(User)session
+						.getAttribute("userData");
+
+				user.setName(name);
+				user.setPhone(phone);
+				user.setGender(gender);
+
+				if(dob != null && !dob.equals("")) {
+
+					user.setDob(Date.valueOf(dob));
+
+				}
+
+				user.setCountry(country);
+				user.setLanguage(language);
+				user.setCity(city);
+				user.setPincode(pincode);
+				user.setAddress(address);
+				user.setImage(imageName);
+
+				session.setAttribute(
+						"userData",
+						user);
+
+				session.setAttribute(
+						"successMsg",
+						"Profile Updated Successfully");
+				
+
+				resp.sendRedirect("profiles.jsp");
+
+			}
+			else {
+
+				resp.getWriter().println(
+				"<script>alert('Profile Not Updated'); location='profile_edit.jsp';</script>");
+
+			}
+
+		}
+		catch(Exception e) {
+
+			e.printStackTrace();
+
+		}
+
+	}
+
+}

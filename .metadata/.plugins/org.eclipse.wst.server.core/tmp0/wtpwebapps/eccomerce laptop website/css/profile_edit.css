@@ -1,0 +1,162 @@
+*{
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+	font-family:'Poppins',sans-serif;
+}
+
+body{
+	background:#050816;
+	color:white;
+	overflow-x:hidden;
+}
+
+/* NAVBAR */
+
+.navbar{
+	background:#081120;
+	padding:15px 20px;
+	border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.navbar-brand{
+	color:#00d9ff !important;
+	font-size:32px;
+	font-weight:800;
+}
+
+.nav-link{
+	color:white !important;
+	margin-left:18px;
+	font-weight:500;
+}
+
+/* EDIT SECTION */
+
+.edit-section{
+	padding:80px 20px;
+}
+
+.edit-box{
+	background:rgba(255,255,255,0.05);
+	padding:50px;
+	border-radius:35px;
+	border:1px solid rgba(255,255,255,0.08);
+	backdrop-filter:blur(10px);
+}
+
+.edit-box h1{
+	font-size:65px;
+	font-weight:800;
+	margin-bottom:15px;
+}
+
+.edit-box h1 span{
+	color:#00d9ff;
+}
+
+.edit-box p{
+	color:#bdbdbd;
+	font-size:18px;
+}
+
+/* IMAGE */
+
+.image-box{
+	display:flex;
+	justify-content:center;
+}
+
+.profile-img{
+	width:180px;
+	height:180px;
+	border-radius:50%;
+	object-fit:cover;
+	border:6px solid #00d9ff;
+	box-shadow:0 15px 40px rgba(0,217,255,0.25);
+}
+
+/* LABEL */
+
+label{
+	margin-bottom:10px;
+	font-weight:600;
+	color:#00d9ff;
+}
+
+/* FORM */
+
+.form-control,
+.form-select{
+	background:#10192d;
+	border:1px solid rgba(255,255,255,0.08);
+	color:white;
+	padding:15px;
+	border-radius:15px;
+}
+
+.form-control:focus,
+.form-select:focus{
+	background:#10192d;
+	color:white;
+	border-color:#00d9ff;
+	box-shadow:none;
+}
+
+textarea{
+	resize:none;
+}
+
+/* BUTTON */
+
+.save-btn{
+	background:linear-gradient(to right,#00d9ff,#0059ff);
+	border:none;
+	padding:16px 40px;
+	border-radius:50px;
+	color:white;
+	font-size:18px;
+	font-weight:700;
+	margin-top:20px;
+	transition:0.4s;
+}
+
+.save-btn:hover{
+	transform:translateY(-5px);
+	box-shadow:0 15px 30px rgba(0,217,255,0.3);
+}
+
+/* MOBILE */
+
+@media(max-width:991px){
+
+	.edit-box{
+		padding:35px 25px;
+	}
+
+	.edit-box h1{
+		font-size:42px;
+	}
+
+}
+
+@media(max-width:767px){
+
+	.row{
+		--bs-gutter-x:0rem;
+	}
+
+	.edit-box{
+		padding:30px 18px;
+	}
+
+	.profile-img{
+		width:140px;
+		height:140px;
+	}
+
+	.save-btn{
+		width:100%;
+	}
+
+}

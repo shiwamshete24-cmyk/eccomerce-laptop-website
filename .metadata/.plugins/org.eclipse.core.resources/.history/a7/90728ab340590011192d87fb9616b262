@@ -1,0 +1,410 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ page import="in.sp.model.User"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+User user = (User) session.getAttribute("userData");
+
+if (user == null) {
+	response.sendRedirect("login.html");
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cart</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- ICONS -->
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+	rel="stylesheet">
+
+
+
+</head>
+
+<body>
+
+	<!-- NAVBAR -->
+
+	<nav class="navbar navbar-expand-lg navbar-light">
+
+		<div class="container-fluid">
+
+			<a class="navbar-brand" href="home.jsp"> TechLaptop </a>
+
+		</div>
+
+	</nav>
+
+	<!-- HERO -->
+
+	<section class="cart-hero">
+
+		<div class="container text-center">
+
+			<h1>
+
+				Shopping <span>Cart</span>
+
+			</h1>
+
+			<p>Review your selected premium laptops before checkout.</p>
+
+		</div>
+
+	</section>
+
+	<!-- CART -->
+
+	<section class="container pb-5">
+
+		<div class="row g-4">
+
+			<!-- LEFT -->
+
+			<div class="col-12 col-lg-8">
+
+				<%
+				Connection conn = DbConnection.getConnection();
+
+				String sql = "select cart.id as cart_id, cart.quantity, laptops.* " + "from cart "
+						+ "join laptops on cart.laptop_id = laptops.id " + "where cart.user_email=? and cart.status='active'";
+
+				PreparedStatement ps = conn.prepareStatement(sql);
+
+				ps.setString(1, user.getEmail());
+
+				ResultSet rs = ps.executeQuery();
+
+				double subtotal = 0;
+
+				boolean hasItems = false;
+
+				while (rs.next()) {
+
+					hasItems = true;
+
+					double total = rs.getInt("price") * rs.getInt("quantity");
+
+					subtotal += total;
+				%>
+
+				<!-- CART CARD -->
+
+				<div class="cart-card">
+
+					<div class="row align-items-center">
+
+						<!-- IMAGE -->
+
+						<div class="col-12 col-md-3 text-center">
+
+							<img
+								src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image1")%>"
+								class="cart-img">
+
+						</div>
+
+						<!-- DETAILS -->
+
+						<div class="col-12 col-md-5">
+
+							<h3>
+
+								<%=rs.getString("name")%>
+
+							</h3>
+
+							<p>
+
+								<%=rs.getString("processor")%>
+
+								•
+
+								<%=rs.getString("graphics")%>
+
+								•
+
+								<%=rs.getString("ram")%>
+
+								•
+
+								<%=rs.getString("storage")%>
+
+							</p>
+
+							<span class="stock"> In Stock </span> <br>
+							<br> <a href="single_laptop.jsp?id=<%=rs.getInt("id")%>"
+								class="details-btn"> <i class="bi bi-eye-fill"></i> Show
+								Details
+
+							</a>
+
+						</div>
+
+						<!-- QUANTITY -->
+
+						<div class="col-12 col-md-2 text-center">
+
+							<div class="quantity-box">
+
+								<a
+									href="UpdateCartQuantity?id=<%=rs.getInt("cart_id")%>&action=minus">
+
+									<button>-</button>
+
+								</a> <input type="text" value="<%=rs.getInt("quantity")%>" readonly>
+
+								<a
+									href="UpdateCartQuantity?id=<%=rs.getInt("cart_id")%>&action=plus">
+
+									<button>+</button>
+
+								</a>
+
+							</div>
+
+						</div>
+
+						<!-- PRICE -->
+
+						<div class="col-12 col-md-2 text-center">
+
+							<h2 class="price">
+
+								₹<%=total%>
+
+							</h2>
+
+							<a href="RemoveCartItem?id=<%=rs.getInt("cart_id")%>">
+
+								<button class="remove-btn">
+
+									<i class="bi bi-trash"></i>
+
+								</button>
+
+							</a>
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<%
+				}
+
+				if (!hasItems) {
+				%>
+
+				<div class="empty-cart">
+
+					<h2>Your Cart Is Empty</h2>
+
+					<p>Add premium laptops into your cart.</p>
+
+					<a href="laptops.jsp" class="custom-btn"> Continue Shopping </a>
+
+				</div>
+
+				<%
+				}
+				%>
+
+			</div>
+
+			<!-- RIGHT -->
+
+			<div class="col-12 col-lg-4">
+
+				<%
+				double shipping = 0;
+
+				double discount = 0;
+
+				if (hasItems) {
+
+					shipping = 499;
+
+					discount = 10000;
+
+				}
+
+				double finalTotal = subtotal + shipping - discount;
+
+				if (finalTotal < 0) {
+
+					finalTotal = 0;
+
+				}
+				%>
+
+				<div class="summary-box">
+
+					<h2>Order Summary</h2>
+
+					<div class="summary-item">
+
+						<span> Subtotal </span> <span> ₹<%=subtotal%>
+
+						</span>
+
+					</div>
+
+					<div class="summary-item">
+
+						<span> Shipping </span> <span> ₹<%=shipping%>
+
+						</span>
+
+					</div>
+
+					<div class="summary-item">
+
+						<span> Discount </span> <span class="discount"> - ₹<%=discount%>
+
+						</span>
+
+					</div>
+
+					<hr>
+
+					<div class="summary-item total">
+
+						<span> Total </span> <span> ₹<%=finalTotal%>
+
+						</span>
+
+					</div>
+
+					<%
+					if (hasItems) {
+					%>
+
+					<a href="checkout.jsp"
+						class="checkout-btn d-block text-center text-decoration-none">
+
+						Proceed To Checkout </a>
+
+					<%
+					} else {
+					%>
+
+					<button class="checkout-btn" disabled
+						style="opacity: 0.6; cursor: not-allowed;">Cart Is Empty
+
+					</button>
+
+					<%
+					}
+					%>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</section>
+
+	<!-- FOOTER -->
+
+	<footer class="footer">
+
+		<div class="container">
+
+			<div class="row">
+
+				<div class="col-12 col-lg-4">
+
+					<h2 class="footer-logo">TechLaptop</h2>
+
+					<p>Premium ecommerce platform for gaming and business laptops.
+
+					</p>
+
+				</div>
+
+				<div class="col-6 col-lg-2">
+
+					<h4>Links</h4>
+
+					<ul class="footer-links">
+
+						<li><a href="#">Home</a></li>
+						<li><a href="#">Laptops</a></li>
+						<li><a href="#">Cart</a></li>
+
+					</ul>
+
+				</div>
+
+				<div class="col-6 col-lg-3">
+
+					<h4>Categories</h4>
+
+					<ul class="footer-links">
+
+						<li><a href="#">Gaming</a></li>
+						<li><a href="#">Business</a></li>
+						<li><a href="#">Student</a></li>
+
+					</ul>
+
+				</div>
+
+				<div class="col-12 col-lg-3">
+
+					<h4>Contact</h4>
+
+					<p>
+
+						<i class="bi bi-envelope"></i> support@techlaptop.com
+
+					</p>
+
+					<p>
+
+						<i class="bi bi-telephone"></i> +91 9876543210
+
+					</p>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</footer>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+		
+	</script>
+
+</body>
+
+</html>

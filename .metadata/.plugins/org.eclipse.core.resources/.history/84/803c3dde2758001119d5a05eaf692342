@@ -1,0 +1,67 @@
+package in.sp.Controllers;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import in.sp.connection.DbConnection;
+import in.sp.model.User;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@WebServlet("/login")
+public class Login extends HttpServlet {
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+		PrintWriter out = resp.getWriter();
+
+		resp.setContentType("text/html");
+
+		String email = req.getParameter("email");
+		String password = req.getParameter("password");
+
+		try {
+
+			Connection conn = DbConnection.getConnection();
+
+			String sql_query = "select * from users where email = ? and password=?";
+			PreparedStatement ps = conn.prepareStatement(sql_query);
+			ps.setString(1, email);
+			ps.setString(2, password);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+
+				User user = new User();
+				user.setUsername(rs.getString("username"));
+				user.setEmail(rs.getString("email"));
+
+				HttpSession session = req.getSession();
+				session.setAttribute("userData", user);
+
+				RequestDispatcher rd = req.getRequestDispatcher("/home.jsp");
+				rd.forward(req, resp);
+			} else {
+
+				out.println("<script>alert('your login or password wrong');</script>");
+				RequestDispatcher rd = req.getRequestDispatcher("/login.html");
+				rd.include(req, resp);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}

@@ -1,0 +1,132 @@
+package in.sp.Controllers;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import in.sp.connection.DbConnection;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/ForgotPassword")
+
+public class ForgotPassword extends HttpServlet{
+
+	@Override
+	protected void doPost(
+	HttpServletRequest request,
+	HttpServletResponse response)
+
+	throws ServletException, IOException{
+
+		try{
+
+			String email =
+			request.getParameter("email");
+
+			String newPassword =
+			request.getParameter("new_password");
+
+			String confirmPassword =
+			request.getParameter("confirm_password");
+
+			/* PASSWORD MATCH CHECK */
+
+			if(!newPassword.equals(confirmPassword)){
+
+				response.getWriter().println(
+
+				"<script>alert('Passwords do not match');window.location='forgot_password.jsp';</script>"
+
+				);
+
+				return;
+
+			}
+
+			/* DATABASE CONNECTION */
+
+			Connection conn =
+			DbConnection.getConnection();
+
+			/* CHECK EMAIL EXISTS */
+
+			PreparedStatement checkPs =
+			conn.prepareStatement(
+
+			"select * from users where email=?"
+
+			);
+
+			checkPs.setString(1, email);
+
+			ResultSet rs =
+			checkPs.executeQuery();
+
+			if(rs.next()){
+
+				/* UPDATE PASSWORD */
+
+				PreparedStatement updatePs =
+				conn.prepareStatement(
+
+				"update users set password=? where email=?"
+
+				);
+
+				updatePs.setString(
+				1,
+				newPassword);
+
+				updatePs.setString(
+				2,
+				email);
+
+				int rowCount =
+				updatePs.executeUpdate();
+
+				if(rowCount > 0){
+
+					response.getWriter().println(
+
+					"<script>alert('Password Updated Successfully');window.location='login.html';</script>"
+
+					);
+
+				}
+				else{
+
+					response.getWriter().println(
+
+					"<script>alert('Password Not Updated');window.location='forget_password.jsp';</script>"
+
+					);
+
+				}
+
+			}
+			else{
+
+				response.getWriter().println(
+
+				"<script>alert('Email Not Found');window.location='forgot_password.jsp';</script>"
+
+				);
+
+			}
+
+		}
+		catch(Exception e){
+
+			e.printStackTrace();
+
+		}
+
+	}
+
+}

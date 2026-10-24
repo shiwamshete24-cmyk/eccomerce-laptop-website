@@ -1,0 +1,37 @@
+1:47:28 Microsoft.Shutdown.TabStripModel.CloseTabs_EdgeBeforeClosingAllTabs
+1:47:28 Microsoft.Shutdown.TabStripModel.InternalCloseTabsImpl
+1:47:28 Microsoft.Shutdown.TabStripModel.InternalCloseTabsImpl_TabClosable
+1:47:28 Microsoft.Shutdown.TabStripModel.InternalCloseTabsImpl_ClosingAll
+1:47:28 Microsoft.Shutdown.TabStripModel.CloseWebContentses
+1:47:28 Microsoft.Shutdown.TabStripModel.CloseWebContentses_FastShutdown
+1:47:28 Microsoft.Shutdown.TabStripModel.ShouldRunUnloadListenerBeforeClosing_false
+1:47:28 Tab8 RenderProcessGone
+1:47:28 Microsoft.UnloadController.ClearUnloadState
+1:47:28 Microsoft.Shutdown.TabStripModel.RunUnloadListenerBeforeClosing_false
+1:47:28 Microsoft.Shutdown.TabStripModel.InternalCloseTabsImpl_ClosedAll
+1:47:28 Microsoft.Shutdown.TabStripModel.SendDetachWebContentsNotifications
+1:47:28 Microsoft.UnloadController.ClearUnloadState
+1:47:28 Browser8 Close Tab8 at 0
+1:47:28 Tab8 WebContentsDestroyed
+1:47:28 Microsoft.UnloadController.TabStripEmpty
+1:47:28 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+1:47:28 Microsoft.UnloadController.HasCompletedUnloadProcessing_True
+1:47:28 Microsoft.Shutdown.OnWindowClosing
+1:47:28 Microsoft.UnloadController.IsUnclosableApp_IsNotWebApp
+1:47:28 Microsoft.UnloadController.HasCompletedUnloadProcessing_True
+1:47:28 Microsoft.Shutdown.OnWindowClosing_MaybeClearBrowsingDataOnExit
+1:47:28 Microsoft.Shutdown.OnWindowClosing_ClearBrowsingDataOnExitNotInProgress
+1:47:28 Microsoft.Shutdown.OnWindowClosingPostClearBrowsingData_NoBrowsingDataCleared
+1:47:28 Widget Closed: BrowserWidget
+1:47:28 Microsoft.UnloadController.HasCompletedUnloadProcessing_True
+1:47:28 Microsoft.Shutdown.OnWindowClosing
+1:47:28 Microsoft.Shutdown.OnWindowClosing_DeleteScheduled
+1:47:29 Microsoft.Last_Browser_Removed
+1:47:29 Microsoft.Shutdown.ShutdownIfNoBrowsers
+1:47:29 Microsoft.Shutdown.SetTryingToQuit_Quitting
+1:47:29 Microsoft.Shutdown.NotifyAppTerminating
+1:47:29 Microsoft.Shutdown.OnAppExiting
+1:47:29 Microsoft.Shutdown.HandleAppExitingForPlatform_Aura
+1:47:29 Microsoft.Shutdown.HandleAppExitingForPlatform_Aura.NotificationUIManager_StartShutdown
+1:47:29 Microsoft.Shutdown.HandleAppExitingForPlatform_Aura.CloseAllSecondaryWidgets
+1:47:30 Shutdown

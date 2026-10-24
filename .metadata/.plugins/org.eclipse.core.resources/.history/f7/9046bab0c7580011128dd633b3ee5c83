@@ -1,0 +1,67 @@
+package in.sp.Controllers;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import in.sp.connection.DbConnection;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+
+@WebServlet("/register")
+public class Register extends HttpServlet{
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+        PrintWriter out = resp.getWriter();
+		
+		resp.setContentType("text/html");
+		
+		String username = req.getParameter("username");
+		String email = req.getParameter("email");
+		String password = req.getParameter("password");
+		String comfirm_password = req.getParameter("confirm-password");
+		
+		try {
+			
+			Connection conn = DbConnection.getConnection();
+			
+			String sql_query = "insert into users(name , email , password , confirm_password) values(?,?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(sql_query);
+			ps.setString(1, username);
+			ps.setString(2, email);
+			ps.setString(3, password);
+			ps.setString(4, comfirm_password);
+			
+			int result = ps.executeUpdate();
+			
+			if(result>0) {
+				out.println("<script>alert('signup successfully');</script>");
+				RequestDispatcher rd = req.getRequestDispatcher("/login.html");
+				
+				rd.include(req, resp);
+				
+			}
+			else {
+				out.println("<script>alert('login failed');</script>");
+				RequestDispatcher rd = req.getRequestDispatcher("/register.html");
+				rd.include(req, resp);
+			}
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			
+		}
+		
+		
+	}
+
+}

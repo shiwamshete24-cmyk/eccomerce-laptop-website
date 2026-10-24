@@ -1,0 +1,85 @@
+package in.sp.backend;
+
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import in.sp.connection.DbConnection;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/UpdateCartQuantity")
+public class UpdateCartQuantity extends HttpServlet{
+
+	@Override
+	protected void doGet(
+	HttpServletRequest request,
+	HttpServletResponse response)
+
+	throws ServletException, IOException{
+
+		try{
+
+			int cartId =
+			Integer.parseInt(
+			request.getParameter("id"));
+
+			String action =
+			request.getParameter("action");
+
+			Connection conn =
+			DbConnection.getConnection();
+
+			/* PLUS */
+
+			if(action.equals("plus")){
+
+				String sql =
+				"update cart " +
+				"set quantity=quantity+1 " +
+				"where id=?";
+
+				PreparedStatement ps =
+				conn.prepareStatement(sql);
+
+				ps.setInt(1, cartId);
+
+				ps.executeUpdate();
+
+			}
+
+			/* MINUS */
+
+			else if(action.equals("minus")){
+
+				String sql =
+				"update cart " +
+				"set quantity=quantity-1 " +
+				"where id=? and quantity > 1";
+
+				PreparedStatement ps =
+				conn.prepareStatement(sql);
+
+				ps.setInt(1, cartId);
+
+				ps.executeUpdate();
+
+			}
+
+			response.sendRedirect("cart.jsp");
+
+		}
+
+		catch(Exception e){
+
+			e.printStackTrace();
+
+		}
+
+	}
+
+}

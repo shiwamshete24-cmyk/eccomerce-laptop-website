@@ -1,0 +1,573 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%>
+
+<%@ page import="in.sp.model.User"%>
+
+<%
+User user = (User)session.getAttribute("userData");
+
+if(user == null){
+	response.sendRedirect("login.jsp");
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Laptops</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<!-- ICON -->
+
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+	font-family:'Poppins',sans-serif;
+}
+
+body{
+	background:#050816;
+	color:white;
+	overflow-x:hidden;
+}
+
+/* NAVBAR */
+
+.navbar{
+	background:#081120;
+	padding:15px 20px;
+	border-bottom:1px solid rgba(255,255,255,0.08);
+	position:sticky;
+	top:0;
+	z-index:999;
+}
+
+.navbar-brand{
+	color:#00d9ff !important;
+	font-size:32px;
+	font-weight:800;
+}
+
+.nav-link{
+	color:white !important;
+	margin-left:18px;
+	font-weight:500;
+	position:relative;
+	transition:0.3s;
+}
+
+.nav-link::after{
+	content:'';
+	position:absolute;
+	left:0;
+	bottom:-5px;
+	width:0%;
+	height:2px;
+	background:#00d9ff;
+	transition:0.4s;
+}
+
+.nav-link:hover::after{
+	width:100%;
+}
+
+.nav-link:hover{
+	color:#00d9ff !important;
+}
+
+/* BUTTON */
+
+.custom-btn{
+	background:linear-gradient(to right,#00d9ff,#0059ff);
+	color:white;
+	padding:12px 24px;
+	border-radius:40px;
+	text-decoration:none;
+	font-weight:600;
+	display:inline-block;
+	transition:0.4s;
+	border:none;
+}
+
+.custom-btn:hover{
+	transform:translateY(-4px);
+	box-shadow:0 10px 20px rgba(0,217,255,0.4);
+	color:white;
+}
+
+/* USER BUTTON */
+
+.user-btn{
+	color:#00d9ff !important;
+	font-weight:700;
+}
+
+/* DROPDOWN */
+
+.dropdown-menu{
+	background:#10192d;
+	border:1px solid rgba(255,255,255,0.08);
+	border-radius:14px;
+	padding:10px;
+}
+
+.dropdown-item{
+	color:white;
+	padding:10px 14px;
+	border-radius:10px;
+	transition:0.3s;
+}
+
+.dropdown-item:hover{
+	background:#00d9ff;
+	color:black;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+	background:#081120;
+	min-height:100vh;
+	padding:25px 20px;
+	border-right:1px solid rgba(255,255,255,0.08);
+	position:sticky;
+	top:80px;
+}
+
+.sidebar-title{
+	font-size:28px;
+	font-weight:700;
+	margin-bottom:30px;
+	color:#00d9ff;
+}
+
+.brand-btn{
+	width:100%;
+	background:rgba(255,255,255,0.05);
+	border:none;
+	color:white;
+	padding:14px;
+	margin-bottom:15px;
+	border-radius:14px;
+	text-align:left;
+	transition:0.4s;
+	font-weight:500;
+}
+
+.brand-btn:hover{
+	background:#00d9ff;
+	color:black;
+	transform:translateX(5px);
+}
+
+/* PAGE TITLE */
+
+.page-title{
+	padding:40px 10px 30px;
+}
+
+.page-title h1{
+	font-size:55px;
+	font-weight:800;
+}
+
+.page-title p{
+	color:#bdbdbd;
+	margin-top:10px;
+}
+
+/* PRODUCT CARD */
+
+.product-card{
+	background:rgba(255,255,255,0.05);
+	border-radius:24px;
+	overflow:hidden;
+	border:1px solid rgba(255,255,255,0.08);
+	transition:0.4s;
+	height:100%;
+	position:relative;
+}
+
+.product-card:hover{
+	transform:translateY(-10px);
+	box-shadow:0 20px 40px rgba(0,217,255,0.18);
+}
+
+.product-card img{
+	width:100%;
+	height:240px;
+	object-fit:cover;
+	transition:0.5s;
+}
+
+.product-card:hover img{
+	transform:scale(1.08);
+}
+
+.badge-custom{
+	position:absolute;
+	top:15px;
+	left:15px;
+	background:#00d9ff;
+	color:black;
+	font-size:12px;
+	font-weight:700;
+	padding:8px 14px;
+	border-radius:20px;
+	z-index:2;
+}
+
+.product-content{
+	padding:22px;
+}
+
+.product-content h4{
+	font-size:23px;
+	font-weight:700;
+	margin-bottom:10px;
+}
+
+.product-content p{
+	color:#bdbdbd;
+	line-height:1.7;
+	font-size:14px;
+	margin-bottom:18px;
+}
+
+.price{
+	color:#00d9ff;
+	font-size:26px;
+	font-weight:800;
+}
+
+.details-btn{
+	background:linear-gradient(to right,#00d9ff,#0059ff);
+	border:none;
+	color:white;
+	padding:12px 22px;
+	border-radius:40px;
+	font-weight:600;
+	transition:0.4s;
+}
+
+.details-btn:hover{
+	transform:translateY(-4px);
+	box-shadow:0 10px 20px rgba(0,217,255,0.4);
+}
+
+/* MOBILE */
+
+@media(max-width:991px){
+
+	.sidebar{
+		min-height:auto;
+		position:relative;
+		top:0;
+		border-right:none;
+		border-bottom:1px solid rgba(255,255,255,0.08);
+	}
+
+	.page-title h1{
+		font-size:40px;
+	}
+
+	.navbar-collapse{
+		background:#081120;
+		padding:20px;
+		border-radius:20px;
+		margin-top:15px;
+	}
+
+	.nav-link{
+		margin-left:0;
+		margin-bottom:12px;
+	}
+
+	.custom-btn{
+		width:100%;
+		text-align:center;
+	}
+
+}
+
+/* MOBILE CARD */
+
+@media(max-width:767px){
+
+	.row{
+		--bs-gutter-x:0rem;
+	}
+
+	.product-card{
+		margin-bottom:20px;
+	}
+
+	.product-card img{
+		height:220px;
+	}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+
+	<div class="container-fluid">
+
+		<a class="navbar-brand" href="profile.jsp">
+			TechLaptop
+		</a>
+
+		<button
+		class="navbar-toggler"
+		data-bs-toggle="collapse"
+		data-bs-target="#menu">
+
+			<span class="navbar-toggler-icon"></span>
+
+		</button>
+
+		<div class="collapse navbar-collapse" id="menu">
+
+			<ul class="navbar-nav ms-auto">
+
+				<li class="nav-item">
+					<a class="nav-link active" href="home.jsp">Home</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="laptops.jsp">Laptops</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="categories.jsp">Categories</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="deals.jsp">Deals</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="orders.jsp">Orders</a>
+				</li>
+
+			</ul>
+
+			<ul class="navbar-nav ms-4 align-items-center">
+
+				<li class="nav-item me-3">
+
+					<a href="cart.jsp" class="custom-btn">
+						<i class="bi bi-cart3"></i> Cart
+					</a>
+
+				</li>
+
+				<li class="nav-item dropdown">
+
+					<a
+					class="nav-link dropdown-toggle user-btn"
+					data-bs-toggle="dropdown">
+
+						<i class="bi bi-person-circle"></i>
+						<%=user.getUsername()%>
+
+					</a>
+
+					<ul class="dropdown-menu dropdown-menu-end">
+
+						<li>
+							<a class="dropdown-item" href="profiles.jsp">
+								Profile
+							</a>
+						</li>
+
+						<li>
+							<a class="dropdown-item" href="orders.jsp">
+								My Orders
+							</a>
+						</li>
+
+						<li><hr class="dropdown-divider"></li>
+
+						<li>
+							<a class="dropdown-item text-danger" href="Logout">
+								Logout
+							</a>
+						</li>
+
+					</ul>
+
+				</li>
+
+			</ul>
+
+		</div>
+
+	</div>
+
+</nav>
+
+<!-- MAIN -->
+
+<div class="container-fluid">
+
+	<div class="row">
+
+		<!-- SIDEBAR -->
+
+		<div class="col-12 col-lg-2 p-0">
+
+			<div class="sidebar">
+
+				<h3 class="sidebar-title">
+					Brands
+				</h3>
+
+				<button class="brand-btn">Dell</button>
+				<button class="brand-btn">HP</button>
+				<button class="brand-btn">Lenovo</button>
+				<button class="brand-btn">ASUS</button>
+				<button class="brand-btn">Acer</button>
+				<button class="brand-btn">MSI</button>
+				<button class="brand-btn">Apple</button>
+				<button class="brand-btn">Samsung</button>
+				<button class="brand-btn">Alienware</button>
+				<button class="brand-btn">Razer</button>
+
+			</div>
+
+		</div>
+
+		<!-- PRODUCTS -->
+
+		<div class="col-12 col-lg-10">
+
+			<div class="container py-4">
+
+				<div class="page-title">
+
+					<h1>
+						Premium Laptops
+					</h1>
+
+					<p>
+						Explore powerful gaming and business laptops.
+					</p>
+
+				</div>
+
+				<div class="row g-4">
+
+					<!-- CARD -->
+
+					<%
+					String[] brands = {
+						"Dell","HP","Lenovo","ASUS","Acer",
+						"MSI","Apple","Samsung","Alienware","Razer"
+					};
+
+					String[] images = {
+						"https://images.unsplash.com/photo-1593642632823-8f785ba67e45?q=80&w=1200&auto=format&fit=crop",
+						"https://images.unsplash.com/photo-1517336714739-489689fd1ca8?q=80&w=1200&auto=format&fit=crop",
+						"https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?q=80&w=1200&auto=format&fit=crop",
+						"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1200&auto=format&fit=crop",
+						"https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?q=80&w=1200&auto=format&fit=crop"
+					};
+
+					for(int i=1; i<=100; i++){
+
+						String brand = brands[i % brands.length];
+						String image = images[i % images.length];
+					%>
+
+					<div class="col-12 col-md-6 col-xl-4">
+
+						<div class="product-card">
+
+							<div class="badge-custom">
+								<%=brand%>
+							</div>
+
+							<img src="<%=image%>">
+
+							<div class="product-content">
+
+								<h4>
+									<%=brand%> Laptop <%=i%>
+								</h4>
+
+								<p>
+									Intel i7 • RTX 4060 • 16GB RAM • 1TB SSD
+								</p>
+
+								<div class="d-flex justify-content-between align-items-center">
+
+									<span class="price">
+										₹<%=80000 + (i*1000)%>
+									</span>
+
+									<button class="details-btn">
+										Details
+									</button>
+
+								</div>
+
+							</div>
+
+						</div>
+
+					</div>
+
+					<%
+					}
+					%>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</div>
+
+<!-- BOOTSTRAP JS -->
+
+<script
+src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+
+</html>

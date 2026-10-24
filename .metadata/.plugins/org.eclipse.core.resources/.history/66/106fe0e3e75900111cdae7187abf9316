@@ -1,0 +1,586 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+int orderId = Integer.parseInt(request.getParameter("id"));
+
+Connection conn = DbConnection.getConnection();
+
+PreparedStatement ps = conn.prepareStatement(
+"select * from orders where id=?");
+
+ps.setInt(1, orderId);
+
+ResultSet rs = ps.executeQuery();
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+
+	User Address Details
+
+</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<!-- ICONS -->
+
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<style>
+
+*{
+
+	margin:0;
+	padding:0;
+	box-sizing:border-box;
+	font-family:'Poppins',sans-serif;
+
+}
+
+body{
+
+	background:#edf2f7;
+
+	min-height:100vh;
+
+	padding:40px 15px;
+
+}
+
+/* MAIN CARD */
+
+.address-card{
+
+	max-width:950px;
+
+	margin:auto;
+
+	background:white;
+
+	border-radius:28px;
+
+	overflow:hidden;
+
+	box-shadow:0 15px 40px rgba(0,0,0,0.08);
+
+}
+
+/* TOP */
+
+.top-section{
+
+	background:linear-gradient(135deg,#0077ff,#00b4ff);
+
+	padding:40px;
+
+	color:white;
+
+	position:relative;
+
+}
+
+.top-section h1{
+
+	font-size:38px;
+
+	font-weight:800;
+
+	margin-bottom:10px;
+
+}
+
+.top-section p{
+
+	font-size:16px;
+
+	opacity:0.9;
+
+}
+
+.order-badge{
+
+	position:absolute;
+
+	right:40px;
+	top:40px;
+
+	background:white;
+
+	color:#0077ff;
+
+	padding:12px 22px;
+
+	border-radius:50px;
+
+	font-weight:700;
+
+	font-size:15px;
+
+}
+
+/* CONTENT */
+
+.content-section{
+
+	padding:40px;
+
+}
+
+/* BOX */
+
+.info-box{
+
+	background:#f8fafc;
+
+	border-radius:20px;
+
+	padding:25px;
+
+	height:100%;
+
+	transition:0.3s;
+
+	border:1px solid #eef2f7;
+
+}
+
+.info-box:hover{
+
+	transform:translateY(-5px);
+
+	box-shadow:0 8px 25px rgba(0,0,0,0.06);
+
+}
+
+.info-box i{
+
+	font-size:28px;
+
+	color:#0077ff;
+
+	margin-bottom:15px;
+
+	display:inline-block;
+
+}
+
+.info-box h5{
+
+	font-size:15px;
+
+	color:#6b7280;
+
+	margin-bottom:8px;
+
+	font-weight:600;
+
+}
+
+.info-box p{
+
+	font-size:18px;
+
+	font-weight:700;
+
+	color:#111827;
+
+	word-break:break-word;
+
+}
+
+/* ADDRESS */
+
+.full-address{
+
+	background:#111827;
+
+	color:white;
+
+	padding:30px;
+
+	border-radius:24px;
+
+	margin-top:30px;
+
+}
+
+.full-address h3{
+
+	font-size:24px;
+
+	font-weight:700;
+
+	margin-bottom:18px;
+
+}
+
+.full-address p{
+
+	font-size:17px;
+
+	line-height:1.9;
+
+	color:#d1d5db;
+
+}
+
+/* BUTTON */
+
+.back-btn{
+
+	margin-top:35px;
+
+	background:#0077ff;
+
+	color:white;
+
+	padding:14px 28px;
+
+	border-radius:14px;
+
+	font-weight:600;
+
+	text-decoration:none;
+
+	display:inline-block;
+
+	transition:0.3s;
+
+}
+
+.back-btn:hover{
+
+	background:#005fe0;
+
+	color:white;
+
+	transform:translateY(-3px);
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+	.top-section{
+
+		padding:30px;
+
+	}
+
+	.top-section h1{
+
+		font-size:28px;
+
+	}
+
+	.order-badge{
+
+		position:static;
+
+		display:inline-block;
+
+		margin-top:20px;
+
+	}
+
+	.content-section{
+
+		padding:25px;
+
+	}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<%
+if(rs.next()){
+%>
+
+<div class="address-card">
+
+	<!-- TOP -->
+
+	<div class="top-section">
+
+		<h1>
+
+			Order Address Details
+
+		</h1>
+
+		<p>
+
+			View complete customer shipping information and order details.
+
+		</p>
+
+		<div class="order-badge">
+
+			Order #ORD<%=rs.getInt("id")%>
+
+		</div>
+
+	</div>
+
+	<!-- CONTENT -->
+
+	<div class="content-section">
+
+		<div class="row g-4">
+
+			<!-- NAME -->
+
+			<div class="col-12 col-md-6">
+
+				<div class="info-box">
+
+					<i class="bi bi-person-fill"></i>
+
+					<h5>Customer Name</h5>
+
+					<p>
+
+						<%=rs.getString("full_name")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- EMAIL -->
+
+			<div class="col-12 col-md-6">
+
+				<div class="info-box">
+
+					<i class="bi bi-envelope-fill"></i>
+
+					<h5>Email Address</h5>
+
+					<p>
+
+						<%=rs.getString("user_email")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- PHONE -->
+
+			<div class="col-12 col-md-6">
+
+				<div class="info-box">
+
+					<i class="bi bi-telephone-fill"></i>
+
+					<h5>Phone Number</h5>
+
+					<p>
+
+						<%=rs.getString("phone")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- PAYMENT -->
+
+			<div class="col-12 col-md-6">
+
+				<div class="info-box">
+
+					<i class="bi bi-credit-card-fill"></i>
+
+					<h5>Payment Method</h5>
+
+					<p>
+
+						<%=rs.getString("payment_method")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- CITY -->
+
+			<div class="col-12 col-md-4">
+
+				<div class="info-box">
+
+					<i class="bi bi-buildings-fill"></i>
+
+					<h5>City</h5>
+
+					<p>
+
+						<%=rs.getString("city")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- STATE -->
+
+			<div class="col-12 col-md-4">
+
+				<div class="info-box">
+
+					<i class="bi bi-globe-central-south-asia"></i>
+
+					<h5>State</h5>
+
+					<p>
+
+						<%=rs.getString("state")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- PINCODE -->
+
+			<div class="col-12 col-md-4">
+
+				<div class="info-box">
+
+					<i class="bi bi-mailbox2"></i>
+
+					<h5>Pincode</h5>
+
+					<p>
+
+						<%=rs.getString("pincode")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- TOTAL AMOUNT -->
+
+			<div class="col-12 col-md-6">
+
+				<div class="info-box">
+
+					<i class="bi bi-currency-rupee"></i>
+
+					<h5>Total Amount</h5>
+
+					<p>
+
+						₹<%=rs.getDouble("total_amount")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+			<!-- STATUS -->
+
+			<div class="col-12 col-md-6">
+
+				<div class="info-box">
+
+					<i class="bi bi-bag-check-fill"></i>
+
+					<h5>Order Status</h5>
+
+					<p>
+
+						<%=rs.getString("order_status")%>
+
+					</p>
+
+				</div>
+
+			</div>
+
+		</div>
+
+		<!-- FULL ADDRESS -->
+
+		<div class="full-address">
+
+			<h3>
+
+				<i class="bi bi-geo-alt-fill"></i>
+
+				Full Shipping Address
+
+			</h3>
+
+			<p>
+
+				<%=rs.getString("address")%>
+
+			</p>
+
+		</div>
+
+		<!-- BUTTON -->
+
+		<a href="admin_orders.jsp"
+		   class="back-btn">
+
+			<i class="bi bi-arrow-left"></i>
+
+			Back To Orders
+
+		</a>
+
+	</div>
+
+</div>
+
+<%
+}
+%>
+
+</body>
+
+</html>

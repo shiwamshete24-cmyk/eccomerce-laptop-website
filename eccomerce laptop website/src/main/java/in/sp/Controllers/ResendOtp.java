@@ -1,0 +1,179 @@
+package in.sp.Controllers;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Properties;
+import java.util.Random;
+
+import jakarta.mail.Message;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@WebServlet("/ResendOtp")
+
+public class ResendOtp extends HttpServlet {
+
+	@Override
+	protected void doGet(
+	HttpServletRequest req,
+	HttpServletResponse resp)
+
+	throws ServletException, IOException {
+
+		resp.setContentType("text/html");
+
+		PrintWriter out =
+		resp.getWriter();
+
+		/* =========================
+		   SESSION
+		========================= */
+
+		HttpSession session =
+		req.getSession();
+
+		/* =========================
+		   GET EMAIL
+		========================= */
+
+		String email =
+		(String) session.getAttribute("email");
+
+		/* =========================
+		   GENERATE OTP
+		========================= */
+
+		Random random =
+		new Random();
+
+		int otp =
+		100000 + random.nextInt(900000);
+
+		/* SAVE OTP */
+
+		session.setAttribute("otp", otp);
+
+		/* =========================
+		   EMAIL CONFIG
+		========================= */
+
+		String senderEmail =
+		"shiwamshete24@gmail.com";
+
+		String senderPassword =
+		"evdabbhxrwdcvzud";
+
+		Properties props =
+		new Properties();
+
+		props.put(
+		"mail.smtp.host",
+		"smtp.gmail.com");
+
+		props.put(
+		"mail.smtp.port",
+		"587");
+
+		props.put(
+		"mail.smtp.auth",
+		"true");
+
+		props.put(
+		"mail.smtp.starttls.enable",
+		"true");
+
+		/* =========================
+		   SESSION
+		========================= */
+
+		Session mailSession =
+		Session.getInstance(props,
+
+		new jakarta.mail.Authenticator() {
+
+			protected PasswordAuthentication
+			getPasswordAuthentication() {
+
+				return new PasswordAuthentication(
+
+				senderEmail,
+				senderPassword
+
+				);
+
+			}
+
+		});
+
+		try {
+
+			/* =========================
+			   MESSAGE
+			========================= */
+
+			Message message =
+			new MimeMessage(mailSession);
+
+			message.setFrom(
+
+			new InternetAddress(senderEmail)
+
+			);
+
+			message.setRecipients(
+
+			Message.RecipientType.TO,
+
+			InternetAddress.parse(email)
+
+			);
+
+			message.setSubject(
+
+			"TechLaptop OTP Verification"
+
+			);
+
+			message.setText(
+
+			"Your New OTP is : " + otp
+
+			);
+
+			/* SEND MAIL */
+
+			Transport.send(message);
+
+			out.println(
+
+			"<script>alert('OTP Resent Successfully');window.location='verify_otp.jsp';</script>"
+
+			);
+
+		}
+
+		catch(Exception e) {
+
+			e.printStackTrace();
+
+			out.println(
+
+			"<script>alert('Failed To Send OTP');window.location='verify_otp.jsp';</script>"
+
+			);
+
+		}
+
+	}
+
+}

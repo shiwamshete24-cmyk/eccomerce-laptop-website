@@ -1,0 +1,167 @@
+package in.sp.Controllers;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Properties;
+
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/ContactMessage")
+
+public class ContactMessage extends HttpServlet {
+
+	@Override
+	protected void doPost(
+	HttpServletRequest req,
+	HttpServletResponse resp)
+
+	throws ServletException, IOException {
+
+		resp.setContentType("text/html");
+
+		PrintWriter out =
+		resp.getWriter();
+
+		/* =========================
+		   GET FORM DATA
+		========================= */
+
+		String name =
+		req.getParameter("name");
+
+		String email =
+		req.getParameter("email");
+
+		String subject =
+		req.getParameter("subject");
+
+		String messageText =
+		req.getParameter("message");
+
+		/* =========================
+		   ADMIN EMAIL
+		========================= */
+
+		String adminEmail =
+		"shiwamshete24@gmail.com";
+
+		String appPassword =
+		"evdabbhxrwdcvzud";
+
+		/* =========================
+		   SMTP SETTINGS
+		========================= */
+
+		Properties props =
+		new Properties();
+
+		props.put(
+		"mail.smtp.host",
+		"smtp.gmail.com");
+
+		props.put(
+		"mail.smtp.port",
+		"587");
+
+		props.put(
+		"mail.smtp.auth",
+		"true");
+
+		props.put(
+		"mail.smtp.starttls.enable",
+		"true");
+
+		Session session =
+		Session.getInstance(
+
+		props,
+
+		new Authenticator() {
+
+			protected PasswordAuthentication
+			getPasswordAuthentication() {
+
+				return new PasswordAuthentication(
+				adminEmail,
+				appPassword);
+
+			}
+
+		});
+
+		try {
+
+			/* =========================
+			   CREATE MESSAGE
+			========================= */
+
+			Message message =
+			new MimeMessage(session);
+
+			message.setFrom(
+			new InternetAddress(adminEmail));
+
+			message.setRecipients(
+
+			Message.RecipientType.TO,
+
+			InternetAddress.parse(adminEmail)
+
+			);
+
+			message.setSubject(
+
+			"New Contact Message : " + subject
+
+			);
+
+			String fullMessage =
+
+			"Name : " + name +
+
+			"\nEmail : " + email +
+
+			"\n\nMessage :\n" + messageText;
+
+			message.setText(fullMessage);
+
+			/* =========================
+			   SEND MAIL
+			========================= */
+
+			Transport.send(message);
+
+			out.println(
+
+			"<script>alert('Message Sent Successfully');window.location='contact.jsp';</script>"
+
+			);
+
+		}
+		catch(Exception e) {
+
+			e.printStackTrace();
+
+			out.println(
+
+			"<script>alert('Failed To Send Message');window.location='contact.jsp';</script>"
+
+			);
+
+		}
+
+	}
+
+}

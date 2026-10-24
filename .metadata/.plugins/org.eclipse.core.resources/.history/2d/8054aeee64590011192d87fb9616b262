@@ -1,0 +1,929 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ page import="in.sp.model.User"%>
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+User user = (User) session.getAttribute("userData");
+
+if (user == null) {
+	response.sendRedirect("login.html");
+}
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cart - TechLaptop</title>
+
+<!-- BOOTSTRAP -->
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- ICONS -->
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- GOOGLE FONT -->
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+	rel="stylesheet">
+
+<style>
+
+/* =========================
+   GLOBAL
+========================= */
+
+*{
+
+	margin:0;
+
+	padding:0;
+
+	box-sizing:border-box;
+
+	font-family:'Poppins',sans-serif;
+
+}
+
+body{
+
+	background:#f4f7fb;
+
+	overflow-x:hidden;
+
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+.custom-navbar{
+
+	background:
+	rgba(0,0,0,0.82);
+
+	backdrop-filter:blur(12px);
+
+	padding:18px 0;
+
+	position:sticky;
+
+	top:0;
+
+	z-index:999;
+
+	border-bottom:
+	1px solid rgba(255,255,255,0.08);
+
+}
+
+.navbar-brand{
+
+	font-size:34px;
+
+	font-weight:800;
+
+	color:white !important;
+
+	letter-spacing:1px;
+
+}
+
+.nav-link{
+
+	color:#e5e7eb !important;
+
+	font-size:15px;
+
+	font-weight:500;
+
+	margin-left:20px;
+
+	display:flex;
+
+	align-items:center;
+
+	gap:8px;
+
+	transition:0.3s;
+
+}
+
+.nav-link:hover{
+
+	color:#d946ef !important;
+
+}
+
+.profile-btn{
+
+	background:
+	rgba(255,255,255,0.08);
+
+	padding:10px 18px !important;
+
+	border-radius:14px;
+
+}
+
+.dropdown-menu{
+
+	background:#111827;
+
+	border:none;
+
+	border-radius:16px;
+
+	padding:10px;
+
+}
+
+.dropdown-item{
+
+	color:white;
+
+	padding:12px 15px;
+
+	border-radius:10px;
+
+	font-size:14px;
+
+	transition:0.3s;
+
+}
+
+.dropdown-item:hover{
+
+	background:#d946ef;
+
+	color:white;
+
+}
+
+.cart-btn{
+
+	background:
+	linear-gradient(
+	135deg,
+	#d946ef,
+	#9333ea
+	);
+
+	color:white;
+
+	text-decoration:none;
+
+	padding:12px 24px;
+
+	border-radius:16px;
+
+	font-size:15px;
+
+	font-weight:600;
+
+	display:inline-flex;
+
+	align-items:center;
+
+	gap:8px;
+
+	box-shadow:
+	0 8px 20px rgba(217,70,239,0.35);
+
+}
+
+.cart-btn:hover{
+
+	color:white;
+
+	transform:translateY(-3px);
+
+}
+
+.navbar-toggler{
+
+	border:none;
+
+	box-shadow:none !important;
+
+}
+
+.navbar-toggler-icon{
+
+	filter:invert(1);
+
+}
+
+/* =========================
+   HERO
+========================= */
+
+.cart-hero{
+
+	background:
+	linear-gradient(
+	135deg,
+	#111827,
+	#1f2937
+	);
+
+	padding:80px 20px;
+
+	color:white;
+
+	text-align:center;
+
+}
+
+.cart-hero h1{
+
+	font-size:60px;
+
+	font-weight:800;
+
+}
+
+.cart-hero h1 span{
+
+	color:#d946ef;
+
+}
+
+.cart-hero p{
+
+	color:#d1d5db;
+
+	font-size:18px;
+
+	margin-top:12px;
+
+}
+
+/* =========================
+   CART CARD
+========================= */
+
+.cart-card{
+
+	background:white;
+
+	padding:25px;
+
+	border-radius:24px;
+
+	box-shadow:
+	0 10px 30px rgba(0,0,0,0.05);
+
+	margin-bottom:25px;
+
+	transition:0.3s;
+
+}
+
+.cart-card:hover{
+
+	transform:translateY(-5px);
+
+}
+
+.cart-img{
+
+	width:100%;
+
+	max-width:170px;
+
+	height:140px;
+
+	object-fit:cover;
+
+	border-radius:18px;
+
+}
+
+.cart-card h3{
+
+	font-size:24px;
+
+	font-weight:700;
+
+	margin-bottom:10px;
+
+	color:#111827;
+
+}
+
+.cart-card p{
+
+	font-size:14px;
+
+	color:#6b7280;
+
+	line-height:1.7;
+
+}
+
+.stock{
+
+	background:#dcfce7;
+
+	color:#15803d;
+
+	padding:6px 14px;
+
+	border-radius:10px;
+
+	font-size:13px;
+
+	font-weight:600;
+
+}
+
+.details-btn{
+
+	display:inline-block;
+
+	padding:10px 18px;
+
+	background:
+	linear-gradient(
+	135deg,
+	#3b82f6,
+	#2563eb
+	);
+
+	color:white;
+
+	border-radius:12px;
+
+	text-decoration:none;
+
+	font-size:14px;
+
+	font-weight:600;
+
+	transition:0.3s;
+
+}
+
+.details-btn:hover{
+
+	color:white;
+
+	transform:translateY(-2px);
+
+}
+
+/* =========================
+   QUANTITY
+========================= */
+
+.quantity-box{
+
+	display:flex;
+
+	align-items:center;
+
+	justify-content:center;
+
+	gap:8px;
+
+}
+
+.quantity-box button{
+
+	width:38px;
+
+	height:38px;
+
+	border:none;
+
+	border-radius:10px;
+
+	background:#111827;
+
+	color:white;
+
+	font-size:18px;
+
+	font-weight:700;
+
+}
+
+.quantity-box input{
+
+	width:55px;
+
+	height:38px;
+
+	text-align:center;
+
+	border:none;
+
+	background:#f3f4f6;
+
+	border-radius:10px;
+
+	font-weight:600;
+
+}
+
+/* =========================
+   PRICE
+========================= */
+
+.price{
+
+	font-size:28px;
+
+	font-weight:800;
+
+	color:#111827;
+
+	margin-bottom:20px;
+
+}
+
+.remove-btn{
+
+	width:45px;
+
+	height:45px;
+
+	border:none;
+
+	border-radius:12px;
+
+	background:#ef4444;
+
+	color:white;
+
+	font-size:18px;
+
+	transition:0.3s;
+
+}
+
+.remove-btn:hover{
+
+	transform:translateY(-3px);
+
+}
+
+/* =========================
+   SUMMARY
+========================= */
+
+.summary-box{
+
+	background:white;
+
+	padding:35px;
+
+	border-radius:24px;
+
+	box-shadow:
+	0 10px 30px rgba(0,0,0,0.05);
+
+	position:sticky;
+
+	top:110px;
+
+}
+
+.summary-box h2{
+
+	font-size:30px;
+
+	font-weight:800;
+
+	margin-bottom:25px;
+
+	color:#111827;
+
+}
+
+.summary-item{
+
+	display:flex;
+
+	justify-content:space-between;
+
+	margin-bottom:18px;
+
+	font-size:16px;
+
+	color:#374151;
+
+}
+
+.discount{
+
+	color:#16a34a;
+
+	font-weight:700;
+
+}
+
+.total{
+
+	font-size:22px;
+
+	font-weight:800;
+
+	color:#111827;
+
+}
+
+.checkout-btn{
+
+	width:100%;
+
+	padding:18px;
+
+	border:none;
+
+	border-radius:18px;
+
+	background:
+	linear-gradient(
+	135deg,
+	#d946ef,
+	#9333ea
+	);
+
+	color:white;
+
+	font-size:18px;
+
+	font-weight:700;
+
+	margin-top:20px;
+
+	text-decoration:none;
+
+	transition:0.3s;
+
+}
+
+.checkout-btn:hover{
+
+	color:white;
+
+	transform:translateY(-3px);
+
+}
+
+/* =========================
+   EMPTY CART
+========================= */
+
+.empty-cart{
+
+	background:white;
+
+	padding:70px 30px;
+
+	border-radius:24px;
+
+	text-align:center;
+
+	box-shadow:
+	0 10px 30px rgba(0,0,0,0.05);
+
+}
+
+.empty-cart h2{
+
+	font-size:42px;
+
+	font-weight:800;
+
+	margin-bottom:15px;
+
+}
+
+.empty-cart p{
+
+	color:#6b7280;
+
+	margin-bottom:30px;
+
+}
+
+.custom-btn{
+
+	padding:16px 30px;
+
+	background:
+	linear-gradient(
+	135deg,
+	#d946ef,
+	#9333ea
+	);
+
+	color:white;
+
+	text-decoration:none;
+
+	border-radius:16px;
+
+	font-weight:600;
+
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+
+	background:#111827;
+
+	color:white;
+
+	padding:70px 20px 30px;
+
+	margin-top:80px;
+
+}
+
+.footer-logo{
+
+	font-size:36px;
+
+	font-weight:800;
+
+	margin-bottom:15px;
+
+}
+
+.footer h4{
+
+	margin-bottom:18px;
+
+	font-weight:700;
+
+}
+
+.footer-links{
+
+	list-style:none;
+
+	padding:0;
+
+}
+
+.footer-links li{
+
+	margin-bottom:12px;
+
+}
+
+.footer-links a{
+
+	color:#d1d5db;
+
+	text-decoration:none;
+
+	transition:0.3s;
+
+}
+
+.footer-links a:hover{
+
+	color:#d946ef;
+
+}
+
+.footer p{
+
+	color:#d1d5db;
+
+	line-height:1.8;
+
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:991px){
+
+	.navbar-nav{
+
+		padding-top:20px;
+
+	}
+
+	.nav-link{
+
+		margin-left:0;
+
+		margin-bottom:12px;
+
+	}
+
+	.cart-btn{
+
+		width:100%;
+
+		justify-content:center;
+
+		margin-top:10px;
+
+	}
+
+	.cart-hero h1{
+
+		font-size:42px;
+
+	}
+
+	.summary-box{
+
+		position:relative;
+
+		top:0;
+
+	}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg custom-navbar">
+
+	<div class="container">
+
+		<a class="navbar-brand" href="home.jsp">
+
+			TechLaptop
+
+		</a>
+
+		<button
+		class="navbar-toggler"
+		type="button"
+		data-bs-toggle="collapse"
+		data-bs-target="#navbarMenu">
+
+			<span class="navbar-toggler-icon"></span>
+
+		</button>
+
+		<div
+		class="collapse navbar-collapse"
+		id="navbarMenu">
+
+			<ul class="navbar-nav ms-auto align-items-lg-center">
+
+				<li class="nav-item">
+
+					<a
+					class="nav-link"
+					href="home.jsp">
+
+						<i class="bi bi-house-door-fill"></i>
+
+						Home
+
+					</a>
+
+				</li>
+
+				<li class="nav-item">
+
+					<a
+					class="nav-link"
+					href="laptops.jsp">
+
+						<i class="bi bi-laptop-fill"></i>
+
+						Laptops
+
+					</a>
+
+				</li>
+
+				<li class="nav-item">
+
+					<a
+					class="nav-link"
+					href="my_orders.jsp">
+
+						<i class="bi bi-bag-check-fill"></i>
+
+						My Orders
+
+					</a>
+
+				</li>
+
+				<li class="nav-item dropdown">
+
+					<a
+					class="nav-link dropdown-toggle profile-btn"
+					href="#"
+					role="button"
+					data-bs-toggle="dropdown">
+
+						<i class="bi bi-person-circle"></i>
+
+						<%=user.getName()%>
+
+					</a>
+
+					<ul class="dropdown-menu dropdown-menu-end">
+
+						<li>
+
+							<a
+							class="dropdown-item"
+							href="profile.jsp">
+
+								<i class="bi bi-person"></i>
+
+								My Profile
+
+							</a>
+
+						</li>
+
+						<li>
+
+							<a
+							class="dropdown-item"
+							href="change_password.jsp">
+
+								<i class="bi bi-shield-lock"></i>
+
+								Change Password
+
+							</a>
+
+						</li>
+
+						<li>
+
+							<hr class="dropdown-divider">
+
+						</li>
+
+						<li>
+
+							<a
+							class="dropdown-item text-danger"
+							href="Logout">
+
+								<i class="bi bi-box-arrow-right"></i>
+
+								Logout
+
+							</a>
+
+						</li>
+
+					</ul>
+
+				</li>
+
+				<li class="nav-item ms-lg-3">
+
+					<a
+					class="cart-btn"
+					href="cart.jsp">
+
+						<i class="bi bi-cart-fill"></i>
+
+						Cart
+
+					</a>
+
+				</li>
+
+			</ul>
+
+		</div>
+
+	</div>
+
+</nav>

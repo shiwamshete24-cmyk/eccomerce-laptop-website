@@ -1,0 +1,413 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
+<%@ page import="java.sql.*"%>
+<%@ page import="in.sp.connection.DbConnection"%>
+
+<%
+int id = Integer.parseInt(request.getParameter("id"));
+
+Connection conn = DbConnection.getConnection();
+
+String sql = "select * from laptops where id=?";
+
+PreparedStatement ps = conn.prepareStatement(sql);
+
+ps.setInt(1, id);
+
+ResultSet rs = ps.executeQuery();
+
+if (rs.next()) {
+
+	int stock = rs.getInt("stock");
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title><%=rs.getString("name")%></title>
+
+<!-- BOOTSTRAP -->
+
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<!-- ICON -->
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<!-- FONT -->
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+	rel="stylesheet">
+
+<link href="css/card.css" rel="stylesheet">
+</head>
+
+<body>
+
+	<!-- NAVBAR -->
+
+	<nav class="navbar navbar-expand-lg">
+
+		<div class="container-fluid">
+
+			<!-- LOGO -->
+
+			<a href="home.jsp" class="logo"> <i class="bi bi-laptop"></i>
+
+				TechLaptop
+
+			</a>
+
+			<!-- MOBILE TOGGLE -->
+
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+
+				<span class="navbar-toggler-icon"></span>
+
+			</button>
+
+			<!-- MENU -->
+
+			<div class="collapse navbar-collapse" id="navbarMenu">
+
+				<ul class="navbar-nav ms-auto align-items-lg-center">
+
+					<li class="nav-item"><a class="nav-link-custom"
+						href="home.jsp"> <i class="bi bi-house-door"></i> Home
+
+					</a></li>
+
+					<li class="nav-item"><a class="nav-link-custom"
+						href="laptops.jsp"> <i class="bi bi-laptop"></i> Laptops
+
+					</a></li>
+
+					<li class="nav-item"><a class="nav-link-custom"
+						href="cart.jsp"> <i class="bi bi-cart3"></i> Cart
+
+					</a></li>
+
+					<li class="nav-item"><a class="nav-link-custom"
+						href="profiles.jsp"> <i class="bi bi-person-circle"></i>
+							Profile
+
+					</a></li>
+
+				</ul>
+
+			</div>
+
+		</div>
+
+	</nav>
+
+	<!-- MAIN -->
+
+	<div class="container main-section">
+
+		<div class="product-wrapper">
+
+			<div class="row g-5">
+
+				<!-- LEFT -->
+
+				<div class="col-lg-5">
+
+					<div class="left-side">
+
+						<!-- MAIN IMAGE -->
+
+						<div class="main-image-box">
+
+							<img id="mainImage"
+								src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image1")%>"
+								class="main-image">
+
+						</div>
+
+						<!-- THUMBNAILS -->
+
+						<div class="thumbnail-row">
+
+							<img
+								src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image1")%>"
+								class="thumb" onclick="changeImage(this.src)"> <img
+								src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image2")%>"
+								class="thumb" onclick="changeImage(this.src)"> <img
+								src="<%=request.getContextPath()%>/images/laptops/<%=rs.getString("image3")%>"
+								class="thumb" onclick="changeImage(this.src)">
+
+						</div>
+
+					</div>
+
+				</div>
+
+				<!-- RIGHT -->
+
+				<div class="col-lg-7">
+
+					<div class="brand">
+						<%=rs.getString("brand")%>
+					</div>
+
+					<h1 class="title">
+						<%=rs.getString("name")%>
+					</h1>
+
+					<!-- RATING -->
+
+					<div class="rating-row">
+
+						<div class="stars">★★★★☆</div>
+
+						<div class="review-text">
+
+							<%=rs.getDouble("rating")%>
+
+							(
+							<%=rs.getInt("total_reviews")%>
+							Reviews )
+
+						</div>
+
+					</div>
+
+					<!-- PRICE -->
+
+					<div class="price-section">
+
+						<span class="new-price"> ₹<%=rs.getInt("price")%>
+
+						</span> <span class="old-price"> ₹<%=rs.getInt("old_price")%>
+
+						</span> <span class="discount"> 20% OFF </span>
+
+					</div>
+
+					<!-- STOCK -->
+
+					<div class="stock">
+
+						<%
+						if (stock > 0) {
+						%>
+
+						<span class="in-stock"> <i class="bi bi-check-circle-fill"></i>
+
+							In Stock ( <%=stock%> left )
+
+						</span>
+
+						<%
+						} else {
+						%>
+
+						<span class="out-stock"> <i class="bi bi-x-circle-fill"></i>
+
+							Out Of Stock
+
+						</span>
+
+						<%
+						}
+						%>
+
+					</div>
+
+					<!-- FEATURES -->
+
+					<div class="feature-row">
+
+						<div class="feature">
+
+							<i class="bi bi-truck"></i>
+
+							<p>Fast Delivery</p>
+
+						</div>
+
+						<div class="feature">
+
+							<i class="bi bi-shield-check"></i>
+
+							<p>1 Year Warranty</p>
+
+						</div>
+
+						<div class="feature">
+
+							<i class="bi bi-arrow-repeat"></i>
+
+							<p>7 Days Return</p>
+
+						</div>
+
+					</div>
+
+					<!-- BUTTONS -->
+
+					<div class="button-row">
+
+				<!--  		<button class="buy-btn">
+
+							<i class="bi bi-lightning-charge-fill"></i> Buy Now
+
+						</button>   -->
+
+						<form action="AddToCart" method="post" style="flex: 1;">
+
+							<input type="hidden" name="laptopId" value="<%=rs.getInt("id")%>">
+							
+							<%
+						if (stock > 0) {
+						%>
+
+						<button class="cart-btn w-100">
+
+								<i class="bi bi-cart-plus"></i> Add To Cart
+								
+
+							</button>
+
+						<%
+						} else {
+						%>
+
+						<button class="cart-btn w-100" disabled="disabled">
+
+								<i class="bi bi-cart-plus"></i> <span>Out Of Stock</span>
+								
+
+							</button>
+
+						<%
+						}
+						%>
+
+							
+
+						</form>
+
+					</div>
+
+					<!-- SPECIFICATIONS -->
+
+					<div class="spec-box">
+
+						<div class="spec-title">Specifications</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Processor</div>
+							<div class="spec-value"><%=rs.getString("processor")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">RAM</div>
+							<div class="spec-value"><%=rs.getString("ram")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Storage</div>
+							<div class="spec-value"><%=rs.getString("storage")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Graphics</div>
+							<div class="spec-value"><%=rs.getString("graphics")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Display Size</div>
+							<div class="spec-value"><%=rs.getString("display_size")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Display Type</div>
+							<div class="spec-value"><%=rs.getString("display_type")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Battery</div>
+							<div class="spec-value"><%=rs.getString("battery")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Operating System</div>
+							<div class="spec-value"><%=rs.getString("operating_system")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Color</div>
+							<div class="spec-value"><%=rs.getString("color")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Weight</div>
+							<div class="spec-value"><%=rs.getString("weight")%></div>
+						</div>
+
+						<div class="spec-row">
+							<div class="spec-name">Warranty</div>
+							<div class="spec-value"><%=rs.getString("warranty")%></div>
+						</div>
+
+					</div>
+
+					<!-- DESCRIPTION -->
+
+					<div class="desc-box">
+
+						<div class="desc-title">Product Description</div>
+
+						<div class="desc">
+
+							<%=rs.getString("description")%>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<!-- IMAGE CHANGE -->
+
+	<script>
+		function changeImage(imagePath) {
+
+			document.getElementById("mainImage").src = imagePath;
+
+		}
+	</script>
+
+	<!-- BOOTSTRAP JS -->
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+		
+	</script>
+
+</body>
+
+</html>
+
+<%
+}
+%>

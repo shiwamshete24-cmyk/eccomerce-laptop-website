@@ -1,0 +1,173 @@
+package in.sp.model;
+
+import java.sql.Date;
+
+public class User {
+
+	private int id;
+
+	private String name;
+
+	private String email;
+
+	private String gender;
+
+	private Date dob;
+
+	private String country;
+
+	private String language;
+
+	private String city;
+
+	private String pincode;
+
+	private String address;
+
+	private String image;
+
+	private String phone;
+
+	private String accountType;
+
+	private String createdAt;
+
+	private String updatedAt;
+
+	/* GETTER AND SETTER */
+
+	/* ID */
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/* NAME */
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/* EMAIL */
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/* GENDER */
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	/* DOB */
+
+	public Date getDob() {
+		return dob;
+	}
+
+	public void setDob(Date dob) {
+		this.dob = dob;
+	}
+
+	/* COUNTRY */
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	/* LANGUAGE */
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+
+	/* CITY */
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	/* PINCODE */
+
+	public String getPincode() {
+		return pincode;
+	}
+
+	public void setPincode(String pincode) {
+		this.pincode = pincode;
+	}
+
+	/* ADDRESS */
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	/* IMAGE */
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	/* PHONE */
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	/* ACCOUNT TYPE */
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+
+
+	
+
+}
